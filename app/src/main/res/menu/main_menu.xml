@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="settings"
+        android:icon="@drawable/settings"
+        app:showAsAction="always"
+        android:id="@+id/menuSettings"/>
+    <item
+        android:title="login"
+        android:icon="@drawable/login"
+        app:showAsAction="always"
+        android:id="@+id/menuLogin"/>
+    <item
+        android:title="sign up"
+        android:icon="@drawable/signup"
+        app:showAsAction="always"
+        android:id="@+id/menuSignUp"/>
+    <item
+        android:title="log out"
+        android:icon="@drawable/logout"
+        app:showAsAction="always"
+        android:id="@+id/menuLogOut"/>
+
+    </menu>
