@@ -108,6 +108,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(MainActivity.this, ActivitySettings.class);
             startActivity(intent);
         }
+        if (item.getItemId() == R.id.menuLeaderBoard){
+            //Toast.makeText(this, "LeaderBoard", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, ActivityLeaderBoard.class);
+            startActivity(intent);
+        }
 
 
         return true;

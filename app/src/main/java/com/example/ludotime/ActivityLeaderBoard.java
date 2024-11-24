@@ -21,11 +21,11 @@ public class ActivityLeaderBoard extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        setContentView(R.layout.activity_leader_board);
 
         ArrayList<User> users = new ArrayList<>();
-        for(int i=0; i<50; i++){
-            users.add(new User("Ploni Almoni", 1200, "icon"));
+        for(int i=0; i<15; i++){
+            users.add(new User("Ploni Almoni", 1200, "male_avatar"));
         }
 
         RecyclerView recyclerview = findViewById(R.id.recyclerview_leaderboard);

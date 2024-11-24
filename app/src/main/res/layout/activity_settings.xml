@@ -79,20 +79,20 @@
 
     <ImageView
         android:id="@+id/iSettingsAvatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="56dp"
+        app:srcCompat="@drawable/male_avatar"
+        android:layout_width="152dp"
+        android:layout_height="155dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toStartOf="@+id/bSettingsAvatar"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
 
     <Button
         android:id="@+id/bSettingsAvatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:layout_marginEnd="55dp"
+        android:layout_marginTop="92dp"
+        android:layout_marginEnd="52dp"
         android:text="change avatar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bSettingsRename" />
