@@ -65,22 +65,15 @@
 
     <Button
         android:id="@+id/homePage_about"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="50dp"
         android:layout_marginTop="656dp"
-        android:layout_marginEnd="295dp"
+        android:layout_marginEnd="265dp"
+        android:drawableStart="@drawable/about"
+        android:drawablePadding="4dp"
         android:text="About"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/homePage_leaderboard"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="656dp"
-        android:layout_marginEnd="16dp"
-        android:text="Leaders"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
