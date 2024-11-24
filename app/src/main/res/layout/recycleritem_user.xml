@@ -23,7 +23,7 @@
         android:layout_marginTop="48dp"
         android:text="Name"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/imageview_list_user_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_marginTop="48dp"
         android:text="Score"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/imageview_list_user_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -45,5 +45,5 @@
         android:layout_marginEnd="1dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageview_list_user_icon" />
 </androidx.constraintlayout.widget.ConstraintLayout>

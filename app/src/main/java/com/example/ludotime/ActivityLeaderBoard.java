@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ActivityLeaderBoard extends AppCompatActivity {
 
@@ -23,9 +24,11 @@ public class ActivityLeaderBoard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
 
+        //temporary recycler view items:
+        Random r = new Random();
         ArrayList<User> users = new ArrayList<>();
         for(int i=0; i<15; i++){
-            users.add(new User("Ploni Almoni", 1200, "male_avatar"));
+            users.add(new User("Ploni Almoni" + i, 7654-121*i-r.nextInt(68), "male_avatar"));
         }
 
         RecyclerView recyclerview = findViewById(R.id.recyclerview_leaderboard);

@@ -30,8 +30,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User currentUser = users.get(position);
         holder.nameTextView.setText(currentUser.getName());
-        holder.scoreTextView.setText(currentUser.getScore());
-        holder.iconImageView.setImageResource(
+        holder.scoreTextView.setText(String.valueOf(currentUser.getScore()));        holder.iconImageView.setImageResource(
                 holder.nameTextView.getResources().getIdentifier(currentUser.getIcon(),
                         "drawable",
                         holder.nameTextView.getContext().getPackageName()
