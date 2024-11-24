@@ -9,22 +9,46 @@
         android:id="@+id/etSignUpPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="63dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="101dp"
         android:ems="10"
-        android:hint="new password"
+        android:hint="New password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etSignUpName" />
 
     <EditText
+        android:id="@+id/etSignUpVerifyPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="100dp"
+        android:ems="10"
+        android:hint="Verify password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etSignUpPassword" />
+
+    <EditText
         android:id="@+id/etSignUpName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="167dp"
-        android:layout_marginEnd="101dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="100dp"
         android:ems="10"
-        android:hint="name"
+        android:hint="New username"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etSignUpEmail" />
+
+    <EditText
+        android:id="@+id/etSignUpEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="125dp"
+        android:layout_marginEnd="100dp"
+        android:ems="10"
+        android:hint="Email"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -37,5 +61,15 @@
         android:layout_marginEnd="162dp"
         android:text="sign up"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSignUpPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/etSignUpVerifyPassword" />
+
+    <TextView
+        android:id="@+id/tvSignup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="178dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etSignUpVerifyPassword" />
 </androidx.constraintlayout.widget.ConstraintLayout>
