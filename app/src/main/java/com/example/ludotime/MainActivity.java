@@ -20,8 +20,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button bLogin;
     Dialog dialogSignUp;
     Button bSignUp;
-
     TextView tvWelcome;
+
+    // Sign-up dialog elements
+    EditText etSignUpEmail;
+    EditText etSignUpName;
+    EditText etSignUpPassword;
+    EditText etSignUpVerifyPassword;
+    TextView tvSignUpInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Toast.makeText(this, "Login", Toast.LENGTH_SHORT).show();
             dialogLogin = new Dialog(this);
             dialogLogin.setContentView(R.layout.login);
+
             etLoginName = dialogLogin.findViewById(R.id.etLoginName);
+
             bLogin = dialogLogin.findViewById(R.id.bLogin);
             bLogin.setOnClickListener(this);
             dialogLogin.setCancelable(true);
@@ -94,6 +102,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Toast.makeText(this, "Sign Up", Toast.LENGTH_SHORT).show();
             dialogSignUp = new Dialog(this);
             dialogSignUp.setContentView(R.layout.signup);
+
+            etSignUpEmail = dialogSignUp.findViewById(R.id.etSignUpEmail);
+            etSignUpName = dialogSignUp.findViewById(R.id.etSignUpName);
+            etSignUpPassword = dialogSignUp.findViewById(R.id.etSignUpPassword);
+            etSignUpVerifyPassword = dialogSignUp.findViewById(R.id.etSignUpVerifyPassword);
+            tvSignUpInfo = dialogSignUp.findViewById(R.id.tvSignup);
+
             bSignUp = dialogSignUp.findViewById(R.id.bSignUp);
             bSignUp.setOnClickListener(this);
             dialogSignUp.setCancelable(true);
@@ -124,9 +139,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tvWelcome.setText("hello " +etLoginName.getText().toString() + "\nyou have 217 trophies");
             dialogLogin.dismiss();
         }
-        if (v==bSignUp)
-        {
-            dialogSignUp.dismiss();
+        if (v == bSignUp) {
+            // Validate sign-up inputs
+            boolean isValid = true;
+            StringBuilder errorMessage = new StringBuilder();
+
+            // Email validation
+            String email = etSignUpEmail.getText().toString().trim();
+            if (!email.contains("@")) {
+                errorMessage.append("Email must contain '@'. ");
+                isValid = false;
+            }
+
+            // Username validation
+            String username = etSignUpName.getText().toString().trim();
+            if (!username.matches("^[a-zA-Z0-9]+$")) {
+                errorMessage.append("Username can only contain English letters and digits. ");
+                isValid = false;
+            }
+
+            // Password validation
+            String password = etSignUpPassword.getText().toString();
+            String verifyPassword = etSignUpVerifyPassword.getText().toString();
+
+            if (password.length() < 8) {
+                errorMessage.append("Password must be at least 8 characters long. ");
+                isValid = false;
+            }
+
+            if (!password.equals(verifyPassword)) {
+                errorMessage.append("Passwords must match. ");
+                isValid = false;
+            }
+
+            // Display validation results
+            if (isValid) {
+                tvSignUpInfo.setText("Sign-up successful!");
+                tvWelcome.setText("hello " +username+ "\nyou have 237 trophies");
+                dialogSignUp.dismiss();
+            } else {
+                tvSignUpInfo.setText(errorMessage.toString());
+            }
         }
     }
 
