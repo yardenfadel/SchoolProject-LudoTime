@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Dialog dialogLogin;
-    EditText etLoginName;
     Button bLogin;
     Dialog dialogSignUp;
     Button bSignUp;
@@ -29,11 +28,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText etSignUpVerifyPassword;
     TextView tvSignUpInfo;
 
+    // Log-un dialog elements
+    EditText etLogInEmail;
+    EditText etLoginPassword;
+
+    FireBaseController fireBaseController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvWelcome=findViewById(R.id.tvWelcome);
+        fireBaseController = new FireBaseController();
 
 
         Button bAgainstOnline = findViewById(R.id.homePage_onlineMode);
@@ -91,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dialogLogin = new Dialog(this);
             dialogLogin.setContentView(R.layout.login);
 
-            etLoginName = dialogLogin.findViewById(R.id.etLoginName);
+            etLogInEmail = dialogLogin.findViewById(R.id.etLoginEmail);
+            etLoginPassword = dialogLogin.findViewById(R.id.etLoginPassword);
 
             bLogin = dialogLogin.findViewById(R.id.bLogin);
             bLogin.setOnClickListener(this);
@@ -136,7 +143,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v==bLogin)
         {
-            tvWelcome.setText("hello " +etLoginName.getText().toString() + "\nyou have 217 trophies");
+            fireBaseController.loginUser(etLogInEmail.getText().toString(), etLoginPassword.getText().toString());
+            String email = fireBaseController.getAuth().getCurrentUser().getEmail();
+            tvWelcome.setText("hello " + email + "\nyou have 217 trophies");
             dialogLogin.dismiss();
         }
         if (v == bSignUp) {
@@ -176,6 +185,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (isValid) {
                 tvSignUpInfo.setText("Sign-up successful!");
                 tvWelcome.setText("hello " +username+ "\nyou have 237 trophies");
+                User u = new User(email, password, username, 0, "male_avatar");
+                fireBaseController.createUser(u);
                 dialogSignUp.dismiss();
             } else {
                 tvSignUpInfo.setText(errorMessage.toString());

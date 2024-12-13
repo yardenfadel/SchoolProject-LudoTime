@@ -28,7 +28,7 @@ public class ActivityLeaderBoard extends AppCompatActivity {
         Random r = new Random();
         ArrayList<User> users = new ArrayList<>();
         for(int i=0; i<15; i++){
-            users.add(new User("Ploni Almoni" + i, 7654-121*i-r.nextInt(68), "male_avatar"));
+            users.add(new User("pa@gm.com", "pa200", "Ploni Almoni" + i, 7654-121*i-r.nextInt(68), "male_avatar"));
         }
 
         RecyclerView recyclerview = findViewById(R.id.recyclerview_leaderboard);

@@ -5,8 +5,12 @@ public class User {
     private String name;
     private int score;
     private String icon;
+    private String password;
+    private String email;
 
-    public User(String name, int score, String icon) {
+    public User(String email, String password, String name, int score, String icon) {
+        this.email = email;
+        this.password = password;
         this.name = name;
         this.score = score;
         this.icon = icon;
@@ -34,5 +38,21 @@ public class User {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
