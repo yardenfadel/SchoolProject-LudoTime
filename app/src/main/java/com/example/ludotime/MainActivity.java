@@ -122,7 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dialogSignUp.show();
         }
         if (item.getItemId() == R.id.menuLogOut){
-            Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
+            FireBaseController.logOut();
         }
         if (item.getItemId() == R.id.menuSettings){
             //Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();

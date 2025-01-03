@@ -32,6 +32,10 @@ public class FireBaseController {
         return ref;
     }
 
+    public static void logOut(){
+        getAuth().signOut();
+    }
+
 
     public void createUser(User user){
         getAuth().createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
