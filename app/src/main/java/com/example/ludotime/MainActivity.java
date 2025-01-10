@@ -14,7 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, FireBaseListener {
     Dialog dialogLogin;
     Button bLogin;
     Dialog dialogSignUp;
@@ -80,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Toast.makeText(MainActivity.this, "About", Toast.LENGTH_SHORT).show();
             }
         });
-
-
+        fireBaseController.readUser(this);
     }
 
     @Override
@@ -124,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (item.getItemId() == R.id.menuLogOut){
             //Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
             FireBaseController.logOut();
+            tvWelcome.setText("Log in or sign up to play");
         }
         if (item.getItemId() == R.id.menuSettings){
             //Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
@@ -145,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v==bLogin)
         {
             fireBaseController.loginUser(etLogInEmail.getText().toString(), etLoginPassword.getText().toString());
-            String email = fireBaseController.getAuth().getCurrentUser().getEmail();
-            tvWelcome.setText("hello " + email + "\nyou have 217 trophies");
             dialogLogin.dismiss();
         }
         if (v == bSignUp) {
@@ -195,4 +193,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    public void onCallbackUser(User u) {
+        tvWelcome.setText("hello " + u.getName() + "\nyou have 217 trophies");
+    }
 }

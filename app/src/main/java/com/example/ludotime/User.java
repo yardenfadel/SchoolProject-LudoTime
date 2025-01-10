@@ -8,6 +8,9 @@ public class User {
     private String password;
     private String email;
 
+    public User() {
+    }
+
     public User(String email, String password, String name, int score, String icon) {
         this.email = email;
         this.password = password;
