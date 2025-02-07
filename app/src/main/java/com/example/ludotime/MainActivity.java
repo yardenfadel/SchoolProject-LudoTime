@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, FireBaseListener {
     Dialog dialogLogin;
     Button bLogin;
@@ -80,7 +82,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Toast.makeText(MainActivity.this, "About", Toast.LENGTH_SHORT).show();
             }
         });
-        fireBaseController.readUser(this);
+        if(!fireBaseController.isConnected()) {
+            fireBaseController.readUser(this);
+        }
     }
 
     @Override
@@ -196,5 +200,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCallbackUser(User u) {
         tvWelcome.setText("hello " + u.getName() + "\nyou have 217 trophies");
+    }
+
+    @Override
+    public void onCallbackUsers(ArrayList<User> users) {
+
     }
 }

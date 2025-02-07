@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -14,11 +15,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class ActivityGameBot extends AppCompatActivity {
 
+    BoardCanvas board;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_bot);
+        board = new BoardCanvas(this);
 
+        FrameLayout frameLayout=(FrameLayout)findViewById(R.id.board_frame);
+        frameLayout.addView(board);
     }
 
     @Override

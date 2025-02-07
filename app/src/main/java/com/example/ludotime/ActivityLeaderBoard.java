@@ -17,26 +17,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ActivityLeaderBoard extends AppCompatActivity {
+public class ActivityLeaderBoard extends AppCompatActivity implements FireBaseListener {
+    FireBaseController fireBaseController;
+    RecyclerView recyclerView;
+    UserAdapter userAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
+        fireBaseController = new FireBaseController();
+        fireBaseController.readUsersList(this);
 
-        //temporary recycler view items:
-        Random r = new Random();
         ArrayList<User> users = new ArrayList<>();
-        for(int i=0; i<15; i++){
-            users.add(new User("pa@gm.com", "pa200", "Ploni Almoni" + i, 7654-121*i-r.nextInt(68), "male_avatar"));
+        //set fake values for when offline
+        Random r = new Random();
+        for(int i=0; i<14; i++){
+            users.add(new User("pa@gm.com", "pa200", "No real results" + i, 7654-121*i-r.nextInt(68), "male_avatar"));
         }
-
-        RecyclerView recyclerview = findViewById(R.id.recyclerview_leaderboard);
+        recyclerView = findViewById(R.id.recyclerview_leaderboard);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerview.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
-        UserAdapter userAdapter = new UserAdapter(users);
-        recyclerview.setAdapter(userAdapter);
+        userAdapter = new UserAdapter(users);
+        recyclerView.setAdapter(userAdapter);
 
     }
 
@@ -56,5 +60,16 @@ public class ActivityLeaderBoard extends AppCompatActivity {
 
 
         return true;
+    }
+
+    @Override
+    public void onCallbackUser(User u) {
+
+    }
+
+    @Override
+    public void onCallbackUsers(ArrayList<User> users) {
+        userAdapter = new UserAdapter(users);
+        recyclerView.setAdapter(userAdapter);
     }
 }

@@ -14,6 +14,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class FireBaseController {
     private static FirebaseAuth mAuth;
     private static FirebaseDatabase database;
@@ -33,6 +35,10 @@ public class FireBaseController {
         if (ref == null)
             ref = getDatabase().getReference("Users");
         return ref;
+    }
+
+    public boolean isConnected(){
+        return getAuth()!=null;
     }
 
     public static void logOut(){
@@ -83,4 +89,25 @@ public class FireBaseController {
             }
         });
     }
+
+    public void readUsersList(FireBaseListener fBL){
+        getReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<User> users = new ArrayList<>();
+                for(DataSnapshot data: dataSnapshot.getChildren()){
+                    User u = data.getValue(User.class);
+                    users.add(u);
+                }
+                fBL.onCallbackUsers(users);
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("TAG", "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+
 }
