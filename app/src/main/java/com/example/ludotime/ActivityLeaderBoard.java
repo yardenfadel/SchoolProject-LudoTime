@@ -74,5 +74,5 @@ public class ActivityLeaderBoard extends AppCompatActivity implements FireBaseLi
     }
 
     @Override
-    public void onCallbackFromLogin(){}
+    public void onCallbackFromLoginOrSignup(){}
 }

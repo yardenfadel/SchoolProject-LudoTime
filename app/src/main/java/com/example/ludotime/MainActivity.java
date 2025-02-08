@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        System.out.println("on prepare options menu");
+
         MenuItem menuLogin = menu.findItem(R.id.menuLogin);
         MenuItem menuSignUp = menu.findItem(R.id.menuSignUp);
 
@@ -190,6 +192,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (!email.contains("@")) {
                 errorMessage.append("Email must contain '@'. ");
                 isValid = false;
+            } else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                errorMessage.append("Email is invalid. ");
+                isValid = false;
             }
 
             // Username validation
@@ -218,8 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvSignUpInfo.setText("Sign-up successful!");
                 tvWelcome.setText("hello " +username);
                 User u = new User(email, password, username, 0, "male_avatar");
-                fireBaseController.createUser(u);
-                invalidateOptionsMenu();
+                fireBaseController.createUser(u, this);
                 dialogSignUp.dismiss();
             } else {
                 tvSignUpInfo.setText(errorMessage.toString());
@@ -230,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCallbackUser(User u) {
         tvWelcome.setText("hello " + u.getName());
+        System.out.println("name set 4");
+
     }
 
     @Override
@@ -238,8 +244,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onCallbackFromLogin() {
+    public void onCallbackFromLoginOrSignup() {
         invalidateOptionsMenu();
+        System.out.println("callback 3");
         fireBaseController.readUser(this);
     }
 

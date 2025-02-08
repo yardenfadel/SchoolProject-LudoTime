@@ -46,21 +46,32 @@ public class FireBaseController {
     }
 
 
-    public void createUser(User user){
+    public void createUser(User user, FireBaseListener fBL){
         getAuth().createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "createUserWithEmail:success");
-                            getReference().child(task.getResult().getUser().getUid()).setValue(user);
-
+                            // Wait for setValue to complete before calling callback
+                            System.out.println("user created 1");
+                            getReference().child(task.getResult().getUser().getUid()).setValue(user)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                System.out.println("callback called 2");
+                                                fBL.onCallbackFromLoginOrSignup();
+                                            }
+                                        }
+                                    });
                         } else {
                             Log.d("TAG", "createUserWithEmail:failure", task.getException());
                         }
                     }
                 });
     }
+
     public void loginUser(String email, String password, FireBaseListener fBL){
         getAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -68,7 +79,7 @@ public class FireBaseController {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "signInWithEmail:success");
-                            fBL.onCallbackFromLogin();
+                            fBL.onCallbackFromLoginOrSignup();
                         } else {
                             Log.d("TAG", "signInWithEmail:failure", task.getException());
                         }
