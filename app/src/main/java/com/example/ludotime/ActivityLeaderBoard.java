@@ -72,4 +72,7 @@ public class ActivityLeaderBoard extends AppCompatActivity implements FireBaseLi
         userAdapter = new UserAdapter(users);
         recyclerView.setAdapter(userAdapter);
     }
+
+    @Override
+    public void onCallbackFromLogin(){}
 }

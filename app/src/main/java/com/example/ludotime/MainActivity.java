@@ -36,13 +36,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     FireBaseController fireBaseController;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvWelcome=findViewById(R.id.tvWelcome);
         fireBaseController = new FireBaseController();
-
 
         Button bAgainstOnline = findViewById(R.id.homePage_onlineMode);
         bAgainstOnline.setOnClickListener(new View.OnClickListener() {
@@ -82,14 +82,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Toast.makeText(MainActivity.this, "About", Toast.LENGTH_SHORT).show();
             }
         });
-        if(!fireBaseController.isConnected()) {
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        if(fireBaseController.isConnected()) {
             fireBaseController.readUser(this);
         }
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuLogin = menu.findItem(R.id.menuLogin);
+        MenuItem menuSignUp = menu.findItem(R.id.menuSignUp);
+
+        MenuItem menuLogOut = menu.findItem(R.id.menuLogOut);
+
+        if (fireBaseController.isConnected()) {
+            menuLogin.setVisible(false);
+            menuSignUp.setVisible(false);
+            menuLogOut.setVisible(true);
+        } else {
+            menuLogin.setVisible(true);
+            menuSignUp.setVisible(true);
+            menuLogOut.setVisible(false);
+
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu,menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
@@ -127,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (item.getItemId() == R.id.menuLogOut){
             //Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
             FireBaseController.logOut();
+            supportInvalidateOptionsMenu();
             tvWelcome.setText("Log in or sign up to play");
         }
         if (item.getItemId() == R.id.menuSettings){
@@ -148,8 +174,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v==bLogin)
         {
-            fireBaseController.loginUser(etLogInEmail.getText().toString(), etLoginPassword.getText().toString());
+            fireBaseController.loginUser(etLogInEmail.getText().toString(), etLoginPassword.getText().toString(), this);
+            //fireBaseController.readUser(this);
+            //supportInvalidateOptionsMenu();
             dialogLogin.dismiss();
+
         }
         if (v == bSignUp) {
             // Validate sign-up inputs
@@ -187,9 +216,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Display validation results
             if (isValid) {
                 tvSignUpInfo.setText("Sign-up successful!");
-                tvWelcome.setText("hello " +username+ "\nyou have 237 trophies");
+                tvWelcome.setText("hello " +username);
                 User u = new User(email, password, username, 0, "male_avatar");
                 fireBaseController.createUser(u);
+                invalidateOptionsMenu();
                 dialogSignUp.dismiss();
             } else {
                 tvSignUpInfo.setText(errorMessage.toString());
@@ -199,11 +229,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onCallbackUser(User u) {
-        tvWelcome.setText("hello " + u.getName() + "\nyou have 217 trophies");
+        tvWelcome.setText("hello " + u.getName());
     }
 
     @Override
     public void onCallbackUsers(ArrayList<User> users) {
 
     }
+
+    @Override
+    public void onCallbackFromLogin() {
+        invalidateOptionsMenu();
+        fireBaseController.readUser(this);
+    }
+
 }

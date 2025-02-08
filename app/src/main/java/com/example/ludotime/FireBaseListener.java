@@ -7,4 +7,5 @@ import java.util.ArrayList;
 public interface FireBaseListener {
     void onCallbackUser(User u);
     void onCallbackUsers(ArrayList<User> users);
+    void onCallbackFromLogin();
 }

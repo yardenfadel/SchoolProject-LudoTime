@@ -38,7 +38,7 @@ public class FireBaseController {
     }
 
     public boolean isConnected(){
-        return getAuth()!=null;
+        return getAuth().getCurrentUser()!=null;
     }
 
     public static void logOut(){
@@ -61,13 +61,14 @@ public class FireBaseController {
                     }
                 });
     }
-    public void loginUser(String email, String password){
+    public void loginUser(String email, String password, FireBaseListener fBL){
         getAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "signInWithEmail:success");
+                            fBL.onCallbackFromLogin();
                         } else {
                             Log.d("TAG", "signInWithEmail:failure", task.getException());
                         }
