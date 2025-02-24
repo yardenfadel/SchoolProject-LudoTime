@@ -12,68 +12,131 @@
         android:layout_height="match_parent"
         android:src="@drawable/dice_background_image"
         android:scaleType="centerCrop"
-        android:alpha="0.1"
+        android:alpha="0.15"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardWelcome"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="you need to\nlog in or sign up to\nplay online"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="60dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="#333333"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.143" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/homePage_onlineMode"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="108dp"
-        android:layout_marginEnd="130dp"
-        android:background="#03A9F4"
-        android:text="Online"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You need to log in or sign up to play online"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardOnline"
+        android:layout_width="280dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="80dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardWelcome">
 
-    <Button
-        android:id="@+id/homePage_botMode"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="208dp"
-        android:layout_marginEnd="130dp"
-        android:background="#4CAF50"
-        android:text="Against Bot"
+        <Button
+            android:id="@+id/homePage_onlineMode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#03A9F4"
+            android:text="ONLINE"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardBot"
+        android:layout_width="280dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardOnline">
 
-    <Button
-        android:id="@+id/homePage_localMode"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="308dp"
-        android:layout_marginEnd="130dp"
-        android:background="#FF9800"
-        android:text="Local"
+        <Button
+            android:id="@+id/homePage_botMode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#4CAF50"
+            android:text="AGAINST BOT"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardLocal"
+        android:layout_width="280dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardBot">
 
-    <Button
-        android:id="@+id/homePage_about"
-        android:layout_width="120dp"
+        <Button
+            android:id="@+id/homePage_localMode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FF9800"
+            android:text="LOCAL"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardAbout"
+        android:layout_width="140dp"
         android:layout_height="50dp"
-        android:layout_marginTop="656dp"
-        android:layout_marginEnd="265dp"
-        android:drawableStart="@drawable/about"
-        android:drawablePadding="4dp"
-        android:text="About"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="24dp"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <Button
+            android:id="@+id/homePage_about"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#DDDDDD"
+            android:drawableStart="@drawable/about"
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:text="ABOUT"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

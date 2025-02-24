@@ -26,15 +26,26 @@
         app:layout_constraintStart_toEndOf="@+id/imageview_list_user_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/imageview_score_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="48dp"
+        android:src="@drawable/score"
+        app:layout_constraintEnd_toStartOf="@+id/textview_list_user_score"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/textview_list_user_score"
+        android:layout_marginEnd="8dp" />
+
     <TextView
         android:id="@+id/textview_list_user_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="196dp"
         android:layout_marginTop="48dp"
+        android:layout_marginEnd="24dp"
         android:text="Score"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/imageview_list_user_icon"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View

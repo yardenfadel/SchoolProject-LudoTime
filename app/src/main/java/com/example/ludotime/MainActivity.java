@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Display validation results
             if (isValid) {
                 tvSignUpInfo.setText("Sign-up successful!");
-                tvWelcome.setText("hello " +username);
+                tvWelcome.setText("Hello " +username);
                 User u = new User(email, password, username, 0, "male_avatar");
                 fireBaseController.createUser(u, this);
                 dialogSignUp.dismiss();
@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onCallbackUser(User u) {
-        tvWelcome.setText("hello " + u.getName());
+        tvWelcome.setText("Hello " + u.getName());
         System.out.println("name set 4");
 
     }
