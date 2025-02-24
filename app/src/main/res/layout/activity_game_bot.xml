@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Background Image -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,6 +16,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Game Board -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,8 +26,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-    />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Board Frame -->
     <FrameLayout
         android:id="@+id/board_frame"
         android:layout_width="412dp"
@@ -34,5 +38,473 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Player 1 - Red (Top Left) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/player1_card"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="#333333"
+        app:cardElevation="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/player1_turn_indicator"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="#FFD700"
+                android:rotation="0"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:visibility="visible"/>
+
+            <!-- Avatar with color border -->
+            <FrameLayout
+                android:id="@+id/player1_avatar_container"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <ImageView
+                    android:id="@+id/player1_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatar_circle"
+                    app:tint="#FF5252"
+                    android:padding="2dp"/>
+
+                <ImageView
+                    android:id="@+id/player1_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:padding="6dp"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/player1_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RedPlayer"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_toEndOf="@id/player1_avatar_container"
+                android:layout_marginStart="8dp"
+                android:layout_alignTop="@id/player1_avatar_container"/>
+
+            <LinearLayout
+                android:id="@+id/player1_score_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_toEndOf="@id/player1_avatar_container"
+                android:layout_below="@id/player1_name"
+                android:layout_marginStart="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/score"
+                    android:layout_marginEnd="4dp"/>
+
+                <TextView
+                    android:id="@+id/player1_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#CCCCCC"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/player1_dice_value"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="6"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/dice_background"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/player1_avatar_container"
+                android:layout_marginTop="10dp"/>
+
+            <Button
+                android:id="@+id/player1_roll_button"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:text="Roll"
+                android:textSize="16sp"
+                android:backgroundTint="#FF5252"
+                android:elevation="4dp"
+                android:layout_below="@id/player1_avatar_container"
+                android:layout_toStartOf="@id/player1_dice_value"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="14dp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Player 2 - Green (Top Right) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/player2_card"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="#333333"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/player2_turn_indicator"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="#FFD700"
+                android:rotation="90"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:visibility="invisible"/>
+
+            <!-- Avatar with color border -->
+            <FrameLayout
+                android:id="@+id/player2_avatar_container"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <ImageView
+                    android:id="@+id/player2_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatar_circle"
+                    app:tint="#4CAF50"
+                    android:padding="2dp"/>
+
+                <ImageView
+                    android:id="@+id/player2_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:padding="6dp"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/player2_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GreenPlayer"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_toEndOf="@id/player2_avatar_container"
+                android:layout_marginStart="8dp"
+                android:layout_alignTop="@id/player2_avatar_container"/>
+
+            <LinearLayout
+                android:id="@+id/player2_score_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_toEndOf="@id/player2_avatar_container"
+                android:layout_below="@id/player2_name"
+                android:layout_marginStart="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/score"
+                    android:layout_marginEnd="4dp"/>
+
+                <TextView
+                    android:id="@+id/player2_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#CCCCCC"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/player2_dice_value"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="-"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/dice_background_inactive"
+                android:alpha="0.5"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/player2_avatar_container"
+                android:layout_marginTop="10dp"/>
+
+            <Button
+                android:id="@+id/player2_roll_button"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:text="Roll"
+                android:textSize="16sp"
+                android:backgroundTint="#4CAF50"
+                android:alpha="0.5"
+                android:elevation="4dp"
+                android:layout_below="@id/player2_avatar_container"
+                android:layout_toStartOf="@id/player2_dice_value"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="14dp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Player 4 - Yellow (Bottom Left) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/player4_card"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="#333333"
+        app:cardElevation="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/player4_turn_indicator"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="#FFD700"
+                android:rotation="270"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:visibility="invisible"/>
+
+            <!-- Avatar with color border -->
+            <FrameLayout
+                android:id="@+id/player4_avatar_container"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <ImageView
+                    android:id="@+id/player4_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatar_circle"
+                    app:tint="#FFEB3B"
+                    android:padding="2dp"/>
+
+                <ImageView
+                    android:id="@+id/player4_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:padding="6dp"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/player4_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YellowPlayer"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_toEndOf="@id/player4_avatar_container"
+                android:layout_marginStart="8dp"
+                android:layout_alignTop="@id/player4_avatar_container"/>
+
+            <LinearLayout
+                android:id="@+id/player4_score_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_toEndOf="@id/player4_avatar_container"
+                android:layout_below="@id/player4_name"
+                android:layout_marginStart="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/score"
+                    android:layout_marginEnd="4dp"/>
+
+                <TextView
+                    android:id="@+id/player4_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#CCCCCC"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/player4_dice_value"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="-"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/dice_background_inactive"
+                android:alpha="0.5"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/player4_avatar_container"
+                android:layout_marginTop="10dp"/>
+
+            <Button
+                android:id="@+id/player4_roll_button"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:text="Roll"
+                android:textSize="16sp"
+                android:backgroundTint="#FFEB3B"
+                android:alpha="0.5"
+                android:elevation="4dp"
+                android:layout_below="@id/player4_avatar_container"
+                android:layout_toStartOf="@id/player4_dice_value"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="14dp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Player 3 - Blue (Bottom Right) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/player3_card"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="#333333"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/player3_turn_indicator"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="#FFD700"
+                android:rotation="180"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:visibility="invisible"/>
+
+            <!-- Avatar with color border -->
+            <FrameLayout
+                android:id="@+id/player3_avatar_container"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <ImageView
+                    android:id="@+id/player3_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatar_circle"
+                    app:tint="#2196F3"
+                    android:padding="2dp"/>
+
+                <ImageView
+                    android:id="@+id/player3_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:padding="6dp"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/player3_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BluePlayer"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_toEndOf="@id/player3_avatar_container"
+                android:layout_marginStart="8dp"
+                android:layout_alignTop="@id/player3_avatar_container"/>
+
+            <LinearLayout
+                android:id="@+id/player3_score_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_toEndOf="@id/player3_avatar_container"
+                android:layout_below="@id/player3_name"
+                android:layout_marginStart="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/score"
+                    android:layout_marginEnd="4dp"/>
+
+                <TextView
+                    android:id="@+id/player3_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#CCCCCC"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/player3_dice_value"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="-"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/dice_background_inactive"
+                android:alpha="0.5"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/player3_avatar_container"
+                android:layout_marginTop="10dp"/>
+
+            <Button
+                android:id="@+id/player3_roll_button"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:text="Roll"
+                android:textSize="16sp"
+                android:backgroundTint="#2196F3"
+                android:alpha="0.5"
+                android:elevation="4dp"
+                android:layout_below="@id/player3_avatar_container"
+                android:layout_toStartOf="@id/player3_dice_value"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="14dp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

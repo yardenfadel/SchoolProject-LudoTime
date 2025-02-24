@@ -82,6 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Toast.makeText(MainActivity.this, "About", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        startService(new Intent(this, BGMusicService.class));
+
     }
 
     @Override

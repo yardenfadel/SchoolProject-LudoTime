@@ -24,7 +24,7 @@
         android:layout_marginEnd="103dp"
         android:text="Vibration On Turn Change"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/volumeSF" />
+        app:layout_constraintTop_toBottomOf="@+id/volumeMusic" />
 
     <SeekBar
         android:id="@+id/volumeSF"
@@ -44,6 +44,25 @@
         android:text="SFX Volume"
         app:layout_constraintEnd_toStartOf="@+id/volumeSF"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/volumeMusic"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="54dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/volumeSF" />
+
+    <TextView
+        android:id="@+id/textViewMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="34dp"
+        android:text="Music Volume"
+        app:layout_constraintEnd_toStartOf="@+id/volumeMusic"
+        app:layout_constraintTop_toTopOf="@+id/volumeMusic"
+        app:layout_constraintBottom_toBottomOf="@+id/volumeMusic" />
 
     <EditText
         android:id="@+id/editTextText"
