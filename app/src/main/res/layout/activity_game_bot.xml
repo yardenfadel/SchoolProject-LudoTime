@@ -272,7 +272,7 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Player 4 - Yellow (Bottom Left) -->
+    <!-- Player 4 - Blue (Bottom Left) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/player4_card"
         android:layout_width="160dp"
@@ -313,7 +313,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/avatar_circle"
-                    app:tint="#FFEB3B"
+                    app:tint="#2196F3"
                     android:padding="2dp"/>
 
                 <ImageView
@@ -328,7 +328,7 @@
                 android:id="@+id/player4_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="YellowPlayer"
+                android:text="BluePlayer"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:layout_toEndOf="@id/player4_avatar_container"
@@ -380,7 +380,7 @@
                 android:layout_height="46dp"
                 android:text="Roll"
                 android:textSize="16sp"
-                android:backgroundTint="#FFEB3B"
+                android:backgroundTint="#2196F3"
                 android:alpha="0.5"
                 android:elevation="4dp"
                 android:layout_below="@id/player4_avatar_container"
@@ -390,7 +390,7 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Player 3 - Blue (Bottom Right) -->
+    <!-- Player 4 - Yellow (Bottom Right) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/player3_card"
         android:layout_width="160dp"
@@ -431,7 +431,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/avatar_circle"
-                    app:tint="#2196F3"
+                    app:tint="#FFEB3B"
                     android:padding="2dp"/>
 
                 <ImageView
@@ -446,7 +446,7 @@
                 android:id="@+id/player3_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="BluePlayer"
+                android:text="YellowPlayer"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:layout_toEndOf="@id/player3_avatar_container"
@@ -498,7 +498,7 @@
                 android:layout_height="46dp"
                 android:text="Roll"
                 android:textSize="16sp"
-                android:backgroundTint="#2196F3"
+                android:backgroundTint="#FFEB3B"
                 android:alpha="0.5"
                 android:elevation="4dp"
                 android:layout_below="@id/player3_avatar_container"

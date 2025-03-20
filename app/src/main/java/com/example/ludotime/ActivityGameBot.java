@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -41,6 +42,9 @@ public class ActivityGameBot extends AppCompatActivity {
     private int currentPlayerTurn = 0;
     private Random random = new Random();
     private boolean isRolling = false;
+
+    // Player color names for the toast message
+    private final String[] playerColors = {"Red", "Green", "Yellow", "Blue"};
 
     /**
      * Initialize the game activity
@@ -115,11 +119,12 @@ public class ActivityGameBot extends AppCompatActivity {
 
         // Create animation handler
         final Handler handler = new Handler();
-        final int animationDuration = 1500; // 1.5 seconds
+        final int animationDuration = 200; // 1.5 seconds
         final int intervalBetweenFrames = 50; // 50ms between changes
 
         // Generate final dice value (1-6)
-        final int finalDiceValue = random.nextInt(6) + 1;
+        //final int finalDiceValue = random.nextInt(6) + 1;
+        final int finalDiceValue = 6;
 
         // Create blinking animation for dice value
         AlphaAnimation blinkAnimation = new AlphaAnimation(0.2f, 1.0f);
@@ -167,10 +172,10 @@ public class ActivityGameBot extends AppCompatActivity {
 
                     // Add a highlight effect for the final value
                     AlphaAnimation finalAnimation = new AlphaAnimation(0.2f, 1.0f);
-                    finalAnimation.setDuration(500);
+                    finalAnimation.setDuration(50);
                     diceValues[playerIndex].startAnimation(finalAnimation);
 
-                    // TODO: Handle game logic based on dice roll value
+                    // Handle game logic based on dice roll value
                     gameLogic.setDiceRoll(finalDiceValue);
 
                     // Call playRound, which returns false if waiting for selection
@@ -178,6 +183,23 @@ public class ActivityGameBot extends AppCompatActivity {
 
                     // Update the board display
                     board.invalidate();
+
+                    // Check if any player has won the game
+                    int winnerIndex = gameLogic.getWinner();
+                    if (winnerIndex != -1) {
+                        // A player has won, show toast message
+                        String winnerMessage = playerColors[winnerIndex] + " player has won the game!";
+                        Toast.makeText(ActivityGameBot.this, winnerMessage, Toast.LENGTH_LONG).show();
+
+                        // Disable all roll buttons as game is over
+                        for (Button button : rollButtons) {
+                            button.setEnabled(false);
+                        }
+
+                        // Reset rolling state
+                        isRolling = false;
+                        return;
+                    }
 
                     // Only proceed to next turn if round is complete (no selection needed)
                     if (roundComplete) {
@@ -196,8 +218,21 @@ public class ActivityGameBot extends AppCompatActivity {
                             @Override
                             public void run() {
                                 if (!gameLogic.isWaitingForPawnSelection()) {
-                                    // Selection is complete, move to next player
-                                    nextPlayerTurn();
+                                    // Selection is complete, check if this move resulted in a win
+                                    int winnerIndex = gameLogic.getWinner();
+                                    if (winnerIndex != -1) {
+                                        // A player has won, show toast message
+                                        String winnerMessage = playerColors[winnerIndex] + " player has won the game!";
+                                        Toast.makeText(ActivityGameBot.this, winnerMessage, Toast.LENGTH_LONG).show();
+
+                                        // Disable all roll buttons as game is over
+                                        for (Button button : rollButtons) {
+                                            button.setEnabled(false);
+                                        }
+                                    } else {
+                                        // Move to next player
+                                        nextPlayerTurn();
+                                    }
                                 } else {
                                     // Still waiting, check again in 500ms
                                     selectionHandler.postDelayed(this, 500);

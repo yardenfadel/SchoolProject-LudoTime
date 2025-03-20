@@ -26,8 +26,8 @@ public class BoardCanvas extends View {
     //===== Pawn Constants =====
     public static final int RED_PLAYER = 0;
     public static final int GREEN_PLAYER = 1;
-    public static final int BLUE_PLAYER = 2;
-    public static final int YELLOW_PLAYER = 3;
+    public static final int YELLOW_PLAYER = 2;
+    public static final int BLUE_PLAYER = 3;
 
     // ===== Pawn Positions =====
     private Point[][] PawnPositions; //player, 0-3
@@ -94,7 +94,7 @@ public class BoardCanvas extends View {
      * Get a reference to the logic class
      * @return the logic class
      */
-    public GameLogic getLogic() {
+    GameLogic getLogic(){
         return gameLogic;
     }
 
@@ -239,8 +239,8 @@ public class BoardCanvas extends View {
                     highlightPaint.setColor(Color.WHITE);
                     highlightPaint.setStrokeWidth(5);
 
-                    float x = getPixelsCordX(canvas, position.x);
-                    float y = getPixelsCordY(canvas, position.y);
+                    float x = getGridPixelX(canvas, position.x+1);
+                    float y = getGridPixelY(canvas, position.y+1);
                     float radius = canvas.getWidth() / 32;
                     canvas.drawCircle(x, y, radius, highlightPaint);
                 }

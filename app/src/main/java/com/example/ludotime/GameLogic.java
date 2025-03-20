@@ -16,8 +16,8 @@ public class GameLogic {
     // ===== Constants =====
     public static final int RED_PLAYER = 0;
     public static final int GREEN_PLAYER = 1;
-    public static final int BLUE_PLAYER = 2;
-    public static final int YELLOW_PLAYER = 3;
+    public static final int YELLOW_PLAYER = 2;
+    public static final int BLUE_PLAYER = 3;
 
     // Number required to exit the home area
     private static final int EXIT_ROLL = 6;
@@ -34,9 +34,11 @@ public class GameLogic {
     // Track if pawns are in home or on the board
     private boolean[][] pawnInHome;
     private boolean[][] pawnFinished;
+    private boolean[][] pawnOnFinishLine; // Added: track if pawn is on finish line
 
     // Track pawn positions on the main track (0-51)
     private int[][] pawnPositions;
+    private int[][] finalPathPositions; // Added: track positions within final path (-1 means not in final path)
 
     // Home coordinates for each player's pawns
     private Point[][] homeCoordinates;
@@ -64,7 +66,9 @@ public class GameLogic {
         // Initialize tracking arrays
         pawnInHome = new boolean[4][4];
         pawnFinished = new boolean[4][4];
+        pawnOnFinishLine = new boolean[4][4]; // Added: initialize pawnOnFinishLine array
         pawnPositions = new int[4][4];
+        finalPathPositions = new int[4][4]; // Added: initialize finalPathPositions array
 
         // Initialize home coordinates
         homeCoordinates = new Point[4][4];
@@ -96,32 +100,32 @@ public class GameLogic {
         // Initialize final path coordinates
         finalPathCoordinates = new Point[4][5]; // 5 steps in final path
 
-        // RED final path (vertical upward from bottom)
-        finalPathCoordinates[RED_PLAYER][0] = new Point(7, 9);
-        finalPathCoordinates[RED_PLAYER][1] = new Point(7, 8);
-        finalPathCoordinates[RED_PLAYER][2] = new Point(7, 7);
-        finalPathCoordinates[RED_PLAYER][3] = new Point(7, 6);
-        finalPathCoordinates[RED_PLAYER][4] = new Point(7, 5);
+        // RED final path (horizontal rightward from left)
+        finalPathCoordinates[RED_PLAYER][0] = new Point(1, 7);
+        finalPathCoordinates[RED_PLAYER][1] = new Point(2, 7);
+        finalPathCoordinates[RED_PLAYER][2] = new Point(3, 7);
+        finalPathCoordinates[RED_PLAYER][3] = new Point(4, 7);
+        finalPathCoordinates[RED_PLAYER][4] = new Point(5, 7);
 
-        // GREEN final path (horizontal leftward from right)
-        finalPathCoordinates[GREEN_PLAYER][0] = new Point(9, 7);
-        finalPathCoordinates[GREEN_PLAYER][1] = new Point(8, 7);
-        finalPathCoordinates[GREEN_PLAYER][2] = new Point(7, 7);
-        finalPathCoordinates[GREEN_PLAYER][3] = new Point(6, 7);
-        finalPathCoordinates[GREEN_PLAYER][4] = new Point(5, 7);
+        // GREEN final path (vertical downward from top)
+        finalPathCoordinates[GREEN_PLAYER][0] = new Point(7, 1);
+        finalPathCoordinates[GREEN_PLAYER][1] = new Point(7, 2);
+        finalPathCoordinates[GREEN_PLAYER][2] = new Point(7, 3);
+        finalPathCoordinates[GREEN_PLAYER][3] = new Point(7, 4);
+        finalPathCoordinates[GREEN_PLAYER][4] = new Point(7, 5);
 
-        // BLUE final path (vertical downward from top)
-        finalPathCoordinates[BLUE_PLAYER][0] = new Point(7, 5);
-        finalPathCoordinates[BLUE_PLAYER][1] = new Point(7, 6);
-        finalPathCoordinates[BLUE_PLAYER][2] = new Point(7, 7);
-        finalPathCoordinates[BLUE_PLAYER][3] = new Point(7, 8);
+        // BLUE final path (vertical upward from bottom)
+        finalPathCoordinates[BLUE_PLAYER][0] = new Point(7, 13);
+        finalPathCoordinates[BLUE_PLAYER][1] = new Point(7, 12);
+        finalPathCoordinates[BLUE_PLAYER][2] = new Point(7, 11);
+        finalPathCoordinates[BLUE_PLAYER][3] = new Point(7, 10);
         finalPathCoordinates[BLUE_PLAYER][4] = new Point(7, 9);
 
-        // YELLOW final path (horizontal rightward from left)
-        finalPathCoordinates[YELLOW_PLAYER][0] = new Point(5, 7);
-        finalPathCoordinates[YELLOW_PLAYER][1] = new Point(6, 7);
-        finalPathCoordinates[YELLOW_PLAYER][2] = new Point(7, 7);
-        finalPathCoordinates[YELLOW_PLAYER][3] = new Point(8, 7);
+        // YELLOW final path (horizontal leftward from right)
+        finalPathCoordinates[YELLOW_PLAYER][0] = new Point(13, 7);
+        finalPathCoordinates[YELLOW_PLAYER][1] = new Point(12, 7);
+        finalPathCoordinates[YELLOW_PLAYER][2] = new Point(11, 7);
+        finalPathCoordinates[YELLOW_PLAYER][3] = new Point(10, 7);
         finalPathCoordinates[YELLOW_PLAYER][4] = new Point(9, 7);
 
         // Set all pawns to be in home initially
@@ -129,7 +133,9 @@ public class GameLogic {
             for (int pawn = 0; pawn < 4; pawn++) {
                 pawnInHome[player][pawn] = true;
                 pawnFinished[player][pawn] = false;
+                pawnOnFinishLine[player][pawn] = false; // Added: initially not on finish line
                 pawnPositions[player][pawn] = -1;
+                finalPathPositions[player][pawn] = -1; // Added: initially not on final path
             }
         }
 
@@ -166,7 +172,12 @@ public class GameLogic {
         // Now that we have a selection, complete the move
         if (selectedPawn != -1) {
             movePawn(currentPlayer, selectedPawn);
-            checkForCaptures(currentPlayer, pawnPositions[currentPlayer][selectedPawn]);
+
+            // Only check for captures if pawn is not on final path
+            if (!pawnOnFinishLine[currentPlayer][selectedPawn]) {
+                checkForCaptures(currentPlayer, pawnPositions[currentPlayer][selectedPawn]);
+            }
+
             nextTurn();
         }
     }
@@ -256,6 +267,16 @@ public class GameLogic {
     }
 
     /**
+     * Check if a pawn is on the finish line (final path)
+     * @param player Player index (0-3)
+     * @param pawnIndex Pawn index (0-3)
+     * @return True if pawn is on finish line
+     */
+    public boolean isPawnOnFinishLine(int player, int pawnIndex) {
+        return pawnOnFinishLine[player][pawnIndex];
+    }
+
+    /**
      * Get the board position for a specific pawn
      * @param player Player index (0-3)
      * @param pawnIndex Pawn index (0-3)
@@ -272,21 +293,14 @@ public class GameLogic {
             return new Point(7, 7); // Center of board
         }
 
-        // If pawn is approaching finish, check if it's in the final path
-        int trackPosition = pawnPositions[player][pawnIndex];
-        int relativePosition = (trackPosition - startPositions[player] + BOARD_SQUARES) % BOARD_SQUARES;
-
-        // Check if pawn has entered final path
-        if (trackPosition == finalPathEntries[player] ||
-                (trackPosition > finalPathEntries[player] &&
-                        trackPosition < finalPathEntries[player] + 5)) {
-
-            int finalPathIndex = trackPosition - finalPathEntries[player];
+        // If pawn is on finish line, return its position in the final path
+        if (pawnOnFinishLine[player][pawnIndex]) {
+            int finalPathIndex = finalPathPositions[player][pawnIndex];
             return finalPathCoordinates[player][finalPathIndex];
         }
 
         // Otherwise, pawn is on the main track
-        return getMainTrackCoordinates(trackPosition);
+        return getMainTrackCoordinates(pawnPositions[player][pawnIndex]);
     }
 
     /**
@@ -295,44 +309,68 @@ public class GameLogic {
      * @return Point with x,y coordinates on the board grid
      */
     private Point getMainTrackCoordinates(int position) {
-        // Define the main track coordinates
-        // This is a simplified representation of the board track
-        // The actual implementation would map all 52 positions to coordinates
+        // Define full track coordinates in a clockwise pattern
+        // RED start (left to top)
+        if (position == 0) return new Point(1, 6);
+        if (position == 1) return new Point(2, 6);
+        if (position == 2) return new Point(3, 6);
+        if (position == 3) return new Point(4, 6);
+        if (position == 4) return new Point(5, 6);
+        if (position == 5) return new Point(6, 5);
+        if (position == 6) return new Point(6, 4);
+        if (position == 7) return new Point(6, 3);
+        if (position == 8) return new Point(6, 2);
+        if (position == 9) return new Point(6, 1);
+        if (position == 10) return new Point(6, 0);
+        if (position == 11) return new Point(7, 0);
+        if (position == 12) return new Point(8, 0);
 
-        // Red start (bottom middle)
-        if (position == 0) return new Point(7, 10);
-        if (position == 1) return new Point(8, 10);
-        if (position == 2) return new Point(9, 10);
-        if (position == 3) return new Point(10, 10);
-        if (position == 4) return new Point(10, 9);
-        if (position == 5) return new Point(10, 8);
+        // GREEN start (top to right)
+        if (position == 13) return new Point(8, 1);
+        if (position == 14) return new Point(8, 2);
+        if (position == 15) return new Point(8, 3);
+        if (position == 16) return new Point(8, 4);
+        if (position == 17) return new Point(8, 5);
+        if (position == 18) return new Point(9, 6);
+        if (position == 19) return new Point(10, 6);
+        if (position == 20) return new Point(11, 6);
+        if (position == 21) return new Point(12, 6);
+        if (position == 22) return new Point(13, 6);
+        if (position == 23) return new Point(14, 6);
+        if (position == 24) return new Point(14, 7);
+        if (position == 25) return new Point(14, 8);
 
-        // Green start (right middle)
-        if (position == 13) return new Point(10, 7);
-        if (position == 14) return new Point(10, 6);
-        if (position == 15) return new Point(10, 5);
-        if (position == 16) return new Point(10, 4);
-        if (position == 17) return new Point(9, 4);
-        if (position == 18) return new Point(8, 4);
+        // YELLOW start (right to bottom)
+        if (position == 26) return new Point(13, 8);
+        if (position == 27) return new Point(12, 8);
+        if (position == 28) return new Point(11, 8);
+        if (position == 29) return new Point(10, 8);
+        if (position == 30) return new Point(9, 8);
+        if (position == 31) return new Point(8, 9);
+        if (position == 32) return new Point(8, 10);
+        if (position == 33) return new Point(8, 11);
+        if (position == 34) return new Point(8, 12);
+        if (position == 35) return new Point(8, 13);
+        if (position == 36) return new Point(8, 14);
+        if (position == 37) return new Point(7, 14);
+        if (position == 38) return new Point(6, 14);
 
-        // Blue start (top middle)
-        if (position == 26) return new Point(7, 4);
-        if (position == 27) return new Point(6, 4);
-        if (position == 28) return new Point(5, 4);
-        if (position == 29) return new Point(4, 4);
-        if (position == 30) return new Point(4, 5);
-        if (position == 31) return new Point(4, 6);
+        // BLUE start (bottom to left)
+        if (position == 39) return new Point(6, 13);
+        if (position == 40) return new Point(6, 12);
+        if (position == 41) return new Point(6, 11);
+        if (position == 42) return new Point(6, 10);
+        if (position == 43) return new Point(6, 9);
+        if (position == 44) return new Point(5, 8);
+        if (position == 45) return new Point(4, 8);
+        if (position == 46) return new Point(3, 8);
+        if (position == 47) return new Point(2, 8);
+        if (position == 48) return new Point(1, 8);
+        if (position == 49) return new Point(0, 8);
+        if (position == 50) return new Point(0, 7);
+        if (position == 51) return new Point(0, 6);
 
-        // Yellow start (left middle)
-        if (position == 39) return new Point(4, 7);
-        if (position == 40) return new Point(4, 8);
-        if (position == 41) return new Point(4, 9);
-        if (position == 42) return new Point(4, 10);
-        if (position == 43) return new Point(5, 10);
-        if (position == 44) return new Point(6, 10);
-
-        // Default for positions not explicitly defined
-        // In a complete implementation, all 52 positions would be mapped
+        // Default fallback (should never happen in proper implementation)
         return new Point(7, 7);
     }
 
@@ -364,34 +402,97 @@ public class GameLogic {
             return false;
         }
 
-        // Move pawn on the board
-        int currentPosition = pawnPositions[player][pawnIndex];
-        int newPosition = (currentPosition + lastDiceRoll) %BOARD_SQUARES;
+        // Check if pawn is already on finish line (final path)
+        if (pawnOnFinishLine[player][pawnIndex]) {
+            int currentFinalPathPosition = finalPathPositions[player][pawnIndex];
+            int newFinalPathPosition = currentFinalPathPosition + lastDiceRoll;
 
-        // Check if pawn is entering or moving in final path
-        if (currentPosition < finalPathEntries[player] && newPosition >= finalPathEntries[player]) {
-            // Handle entering final path
-            int stepsIntoFinalPath = newPosition - finalPathEntries[player];
-
-            // Check if pawn reached the end or went beyond
-            if (stepsIntoFinalPath >= 5) {
+            // Check if pawn reaches or exceeds end of final path
+            if (newFinalPathPosition >= 5) {
                 // Pawn has reached home!
                 pawnFinished[player][pawnIndex] = true;
-                pawnPositions[player][pawnIndex] = finalPathEntries[player] + 4; // Last position in final path
+                pawnOnFinishLine[player][pawnIndex] = false;
+                finalPathPositions[player][pawnIndex] = -1;
             } else {
-                // Pawn is on final path
-                pawnPositions[player][pawnIndex] = newPosition;
+                // Pawn advances on final path
+                finalPathPositions[player][pawnIndex] = newFinalPathPosition;
             }
 
             moveMade = true;
             return true;
         }
 
-        // Regular move on the main track
-        pawnPositions[player][pawnIndex] = newPosition % BOARD_SQUARES;
+        // Move pawn on the board
+        int currentPosition = pawnPositions[player][pawnIndex];
 
-        // Check if pawn landed on another pawn
-        checkForCaptures(player, pawnPositions[player][pawnIndex]);
+        // Check if the pawn will cross or land on its final path entry point
+        boolean willEnterFinalPath = false;
+        int stepsIntoFinalPath = 0;
+
+        // Define final path entry for current player
+        int entryPoint = finalPathEntries[player];
+
+        // Calculate the start position for this player (to determine full lap)
+        int startPos = startPositions[player];
+
+        // Check entry conditions by player color
+        if (player == RED_PLAYER) {
+            // Needs special handling for positions 47-50 going to final path
+            if (currentPosition >= 47 && currentPosition <= 50) {
+                int distanceToEntry = (50 - currentPosition);
+                // Will either land on or cross the entry point
+                if (lastDiceRoll > distanceToEntry) {
+                    willEnterFinalPath = true;
+                    stepsIntoFinalPath = lastDiceRoll - distanceToEntry - 1;
+                }
+            }
+        }
+        else if (player == GREEN_PLAYER) {
+            // Needs special handling for positions 8-11 going to final path
+            if (currentPosition >= 8 && currentPosition <= 11) {
+                int distanceToEntry = (11 - currentPosition);
+                // Will either land on or cross the entry point
+                if (lastDiceRoll > distanceToEntry) {
+                    willEnterFinalPath = true;
+                    stepsIntoFinalPath = lastDiceRoll - distanceToEntry - 1;
+                }
+            }
+        }
+        else if (player == YELLOW_PLAYER) {
+            // Needs special handling for positions 21-24 going to final path
+            if (currentPosition >= 21 && currentPosition <= 24) {
+                int distanceToEntry = (24 - currentPosition);
+                // Will either land on or cross the entry point
+                if (lastDiceRoll > distanceToEntry) {
+                    willEnterFinalPath = true;
+                    stepsIntoFinalPath = lastDiceRoll - distanceToEntry - 1;
+                }
+            }
+        }
+        else if (player == BLUE_PLAYER) {
+            // Needs special handling for positions 34-37 going to final path
+            if (currentPosition >= 34 && currentPosition <= 37) {
+                int distanceToEntry = (37 - currentPosition);
+                // Will either land on or cross the entry point
+                if (lastDiceRoll > distanceToEntry) {
+                    willEnterFinalPath = true;
+                    stepsIntoFinalPath = lastDiceRoll - distanceToEntry - 1;
+                }
+            }
+        }
+
+        if (willEnterFinalPath && stepsIntoFinalPath < 5) {
+            // Enter final path
+            pawnOnFinishLine[player][pawnIndex] = true;
+            finalPathPositions[player][pawnIndex] = stepsIntoFinalPath;
+        } else {
+            // Regular move on the main track
+            int newPosition = (currentPosition + lastDiceRoll) % BOARD_SQUARES;
+            pawnPositions[player][pawnIndex] = newPosition;
+
+            // Check if pawn landed on another pawn
+            checkForCaptures(player, pawnPositions[player][pawnIndex]);
+        }
 
         moveMade = true;
         return true;
@@ -421,9 +522,9 @@ public class GameLogic {
             if (player == movingPlayer) continue;
 
             for (int pawn = 0; pawn < 4; pawn++) {
-                // Check if opponent pawn is on the same position and not in a safe square
+                // Check if opponent pawn is on the same position and not in home, finished or on finish line
                 if (!pawnInHome[player][pawn] && !pawnFinished[player][pawn] &&
-                        pawnPositions[player][pawn] == position) {
+                        !pawnOnFinishLine[player][pawn] && pawnPositions[player][pawn] == position) {
 
                     //TODO: Safe squares are typically at positions 8, 21, 34, 47
                     // Simplification: we're not implementing safe squares here
@@ -503,9 +604,10 @@ public class GameLogic {
             }
         }
 
-        // Check pawns on board
+        // Check pawns on board or on finish line
         for (int pawn = 0; pawn < 4; pawn++) {
-            if (!pawnInHome[currentPlayer][pawn] && !pawnFinished[currentPlayer][pawn]) {
+            if ((!pawnInHome[currentPlayer][pawn] && !pawnFinished[currentPlayer][pawn]) ||
+                    pawnOnFinishLine[currentPlayer][pawn]) {
                 // This pawn can potentially move
                 return true;
             }
