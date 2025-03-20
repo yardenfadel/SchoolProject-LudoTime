@@ -1,6 +1,13 @@
+/**
+ * ActivityGameBot.java
+ *
+ * Game activity for playing Ludo against bots.
+ * Handles game board, players' turns, and dice rolling mechanics.
+ */
 package com.example.ludotime;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -23,21 +30,27 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.Random;
 
 public class ActivityGameBot extends AppCompatActivity {
-
+    // ===== Game Elements =====
     BoardCanvas board;
     private ImageView[] turnIndicators = new ImageView[4];
     private TextView[] diceValues = new TextView[4];
     private Button[] rollButtons = new Button[4];
+
+    // ===== Game State =====
     private int currentPlayerTurn = 0;
     private Random random = new Random();
     private boolean isRolling = false;
 
+    /**
+     * Initialize the game activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_bot);
-        board = new BoardCanvas(this);
 
+        // Initialize game board
+        board = new BoardCanvas(this);
         FrameLayout frameLayout = findViewById(R.id.board_frame);
         frameLayout.addView(board);
 
@@ -51,6 +64,9 @@ public class ActivityGameBot extends AppCompatActivity {
         updateDiceAppearance();
     }
 
+    /**
+     * Initialize player UI components and set up event listeners
+     */
     private void initializePlayerViews() {
         // Find turn indicators
         turnIndicators[0] = findViewById(R.id.player1_turn_indicator);
@@ -80,6 +96,11 @@ public class ActivityGameBot extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handle dice rolling for the given player
+     *
+     * @param playerIndex Index of the player (0-3)
+     */
     private void rollDice(int playerIndex) {
         // Only allow current player to roll and prevent multiple rolls in progress
         if (playerIndex != currentPlayerTurn || isRolling) return;
@@ -103,6 +124,10 @@ public class ActivityGameBot extends AppCompatActivity {
         blinkAnimation.setDuration(100);
         blinkAnimation.setRepeatMode(Animation.REVERSE);
         blinkAnimation.setRepeatCount(3);
+
+        // Play dice roll sound
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.diceroll);
+        mediaPlayer.start();
 
         // Animation runnable
         Runnable animation = new Runnable() {
@@ -143,7 +168,7 @@ public class ActivityGameBot extends AppCompatActivity {
                     finalAnimation.setDuration(500);
                     diceValues[playerIndex].startAnimation(finalAnimation);
 
-                    // TODO: Handle game logic based on dice roll
+                    // TODO: Handle game logic based on dice roll value
 
                     // Move to next player after short delay
                     handler.postDelayed(() -> {
@@ -158,6 +183,9 @@ public class ActivityGameBot extends AppCompatActivity {
         handler.post(animation);
     }
 
+    /**
+     * Switch to the next player's turn
+     */
     private void nextPlayerTurn() {
         // Disable current player's roll button
         rollButtons[currentPlayerTurn].setEnabled(false);
@@ -172,6 +200,11 @@ public class ActivityGameBot extends AppCompatActivity {
         rollButtons[currentPlayerTurn].setEnabled(true);
     }
 
+    /**
+     * Update UI to indicate the active player
+     *
+     * @param playerIndex Index of the active player (0-3)
+     */
     private void setActivePlayer(int playerIndex) {
         // Hide all turn indicators
         for (int i = 0; i < 4; i++) {
@@ -185,6 +218,9 @@ public class ActivityGameBot extends AppCompatActivity {
         updateDiceAppearance();
     }
 
+    /**
+     * Update the appearance of dice based on current player
+     */
     private void updateDiceAppearance() {
         // Update dice appearances based on current player
         for (int i = 0; i < 4; i++) {
@@ -204,15 +240,21 @@ public class ActivityGameBot extends AppCompatActivity {
         }
     }
 
+    /**
+     * Initialize the options menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.return_to_main_page_menu,menu);
+        getMenuInflater().inflate(R.menu.return_to_main_page_menu, menu);
         return true;
     }
 
+    /**
+     * Handle menu item selections
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menuReturn){
+        if (item.getItemId() == R.id.menuReturn) {
             Intent intent = new Intent(ActivityGameBot.this, MainActivity.class);
             startActivity(intent);
         }

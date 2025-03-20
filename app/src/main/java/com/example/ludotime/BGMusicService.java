@@ -1,3 +1,9 @@
+/**
+ * BGMusicService.java
+ *
+ * Background Music Service for the LudoTime application.
+ * Handles playing, pausing, and volume control for background music.
+ */
 package com.example.ludotime;
 
 import android.app.Service;
@@ -7,15 +13,23 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 
 public class BGMusicService extends Service {
+    // ===== Media Player =====
     private MediaPlayer mediaPlayer;
     private float currentVolume = 1.0f;
+
+    // ===== Constants =====
     public static final String PREFS_NAME = "LudoTimePrefs";
     public static final String MUSIC_VOLUME_KEY = "musicVolume";
     public static final String ACTION_UPDATE_VOLUME = "com.example.ludotime.ACTION_UPDATE_VOLUME";
+    public static final String ACTION_STOP_MUSIC = "com.example.ludotime.ACTION_STOP_MUSIC";
 
+    /**
+     * Initialize the service and set up the media player
+     */
     @Override
     public void onCreate() {
         super.onCreate();
+
         // Initialize MediaPlayer
         mediaPlayer = MediaPlayer.create(this, R.raw.background_music_track_jazz); // Replace with your actual MP3 filename
         mediaPlayer.setLooping(true);
@@ -26,23 +40,42 @@ public class BGMusicService extends Service {
         updateVolume(currentVolume);
     }
 
+    /**
+     * Handle service start commands
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && ACTION_UPDATE_VOLUME.equals(intent.getAction())) {
-            if (intent.hasExtra(MUSIC_VOLUME_KEY)) {
-                currentVolume = intent.getFloatExtra(MUSIC_VOLUME_KEY, currentVolume);
-                updateVolume(currentVolume);
+        if (intent != null) {
+            String action = intent.getAction();
+
+            // Handle volume update action
+            if (ACTION_UPDATE_VOLUME.equals(action)) {
+                if (intent.hasExtra(MUSIC_VOLUME_KEY)) {
+                    currentVolume = intent.getFloatExtra(MUSIC_VOLUME_KEY, currentVolume);
+                    updateVolume(currentVolume);
+                }
             }
-        } else {
-            // Start playing if not at minimum volume
-            if (currentVolume > 0 && !mediaPlayer.isPlaying()) {
-                mediaPlayer.start();
+            // Handle stop music action
+            else if (ACTION_STOP_MUSIC.equals(action)) {
+                stopSelf(); // Stop the service when this action is received
+            }
+            // Default action: play music if not at minimum volume
+            else {
+                if (currentVolume > 0 && !mediaPlayer.isPlaying()) {
+                    mediaPlayer.start();
+                }
             }
         }
 
-        return START_STICKY;
+        // Use START_NOT_STICKY instead of START_STICKY to prevent automatic restart
+        return START_NOT_STICKY;
     }
 
+    /**
+     * Update the volume level and save to preferences
+     *
+     * @param volume Volume level between 0.0 and 1.0
+     */
     private void updateVolume(float volume) {
         if (mediaPlayer != null) {
             // Set the volume for both left and right channels
@@ -66,6 +99,9 @@ public class BGMusicService extends Service {
         }
     }
 
+    /**
+     * Clean up resources when service is destroyed
+     */
     @Override
     public void onDestroy() {
         if (mediaPlayer != null) {
@@ -78,6 +114,9 @@ public class BGMusicService extends Service {
         super.onDestroy();
     }
 
+    /**
+     * Return null as this is not a bound service
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return null;
