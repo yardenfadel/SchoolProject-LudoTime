@@ -32,6 +32,7 @@ import java.util.Random;
 public class ActivityGameBot extends AppCompatActivity {
     // ===== Game Elements =====
     BoardCanvas board;
+    GameLogic gameLogic;
     private ImageView[] turnIndicators = new ImageView[4];
     private TextView[] diceValues = new TextView[4];
     private Button[] rollButtons = new Button[4];
@@ -51,6 +52,7 @@ public class ActivityGameBot extends AppCompatActivity {
 
         // Initialize game board
         board = new BoardCanvas(this);
+        gameLogic = board.getLogic();
         FrameLayout frameLayout = findViewById(R.id.board_frame);
         frameLayout.addView(board);
 
@@ -169,12 +171,41 @@ public class ActivityGameBot extends AppCompatActivity {
                     diceValues[playerIndex].startAnimation(finalAnimation);
 
                     // TODO: Handle game logic based on dice roll value
+                    gameLogic.setDiceRoll(finalDiceValue);
 
-                    // Move to next player after short delay
-                    handler.postDelayed(() -> {
-                        nextPlayerTurn();
-                        isRolling = false; // Reset rolling state
-                    }, 500);
+                    // Call playRound, which returns false if waiting for selection
+                    boolean roundComplete = gameLogic.playRound();
+
+                    // Update the board display
+                    board.invalidate();
+
+                    // Only proceed to next turn if round is complete (no selection needed)
+                    if (roundComplete) {
+                        // Move to next player after short delay
+                        handler.postDelayed(() -> {
+                            nextPlayerTurn();
+                            isRolling = false; // Reset rolling state
+                        }, 500);
+                    } else {
+                        // Let user select a pawn
+                        isRolling = false; // Reset rolling state to allow board interaction
+
+                        // Set up a listener to wait for pawn selection to complete
+                        final Handler selectionHandler = new Handler();
+                        Runnable selectionCheck = new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!gameLogic.isWaitingForPawnSelection()) {
+                                    // Selection is complete, move to next player
+                                    nextPlayerTurn();
+                                } else {
+                                    // Still waiting, check again in 500ms
+                                    selectionHandler.postDelayed(this, 500);
+                                }
+                            }
+                        };
+                        selectionHandler.postDelayed(selectionCheck, 500);
+                    }
                 }
             }
         };

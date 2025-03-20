@@ -50,6 +50,10 @@ public class GameLogic {
     // Final path coordinates for each player
     private Point[][] finalPathCoordinates;
 
+    // Pawn selection and it's flag, used to wait for a choice
+    private boolean waitingForPawnSelection;
+    private int selectedPawn = -1;
+
     /**
      * Constructor initializes the game state
      */
@@ -132,6 +136,47 @@ public class GameLogic {
         diceRolled = false;
         moveMade = false;
         lastDiceRoll = 0;
+    }
+
+    /**
+     *Plays the next round (setPawnSelection() might be called later to complete)
+     *@return Did the round end
+     */
+    public boolean playRound() {
+        if (hasValidMoves()) {
+            // Begin waiting for pawn selection
+            waitingForPawnSelection = true;
+            selectedPawn = -1;
+
+            // Return false to indicate we're waiting for selection
+            return false;
+        }
+
+        nextTurn();
+        return true;
+    }
+
+    /**
+     *Continues the round after a pawn choice
+     */
+    public void setPawnSelection(int pawnIndex) {
+        this.selectedPawn = pawnIndex;
+        this.waitingForPawnSelection = false;
+
+        // Now that we have a selection, complete the move
+        if (selectedPawn != -1) {
+            movePawn(currentPlayer, selectedPawn);
+            checkForCaptures(currentPlayer, pawnPositions[currentPlayer][selectedPawn]);
+            nextTurn();
+        }
+    }
+
+    /**
+     * Find out if the game waits for pawn selection
+     * @return Is the game waiting for a pawn selection
+     */
+    public boolean isWaitingForPawnSelection() {
+        return waitingForPawnSelection;
     }
 
     /**
@@ -321,7 +366,7 @@ public class GameLogic {
 
         // Move pawn on the board
         int currentPosition = pawnPositions[player][pawnIndex];
-        int newPosition = currentPosition + lastDiceRoll;
+        int newPosition = (currentPosition + lastDiceRoll) %BOARD_SQUARES;
 
         // Check if pawn is entering or moving in final path
         if (currentPosition < finalPathEntries[player] && newPosition >= finalPathEntries[player]) {
@@ -380,7 +425,7 @@ public class GameLogic {
                 if (!pawnInHome[player][pawn] && !pawnFinished[player][pawn] &&
                         pawnPositions[player][pawn] == position) {
 
-                    // Safe squares are typically at positions 8, 21, 34, 47
+                    //TODO: Safe squares are typically at positions 8, 21, 34, 47
                     // Simplification: we're not implementing safe squares here
 
                     // Send the pawn back home
@@ -409,6 +454,7 @@ public class GameLogic {
      * Check if the game is over (any player has won)
      * @return Player index of winner, or -1 if no winner yet
      */
+    //TODO: make game 3 won
     public int getWinner() {
         for (int player = 0; player < 4; player++) {
             if (hasPlayerWon(player)) {

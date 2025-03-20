@@ -20,6 +20,9 @@ public class BoardCanvas extends View {
     // ===== Context =====
     Context context;
 
+    //===== Reference to Logic Class =====
+    private GameLogic gameLogic;
+
     //===== Pawn Constants =====
     public static final int RED_PLAYER = 0;
     public static final int GREEN_PLAYER = 1;
@@ -27,16 +30,11 @@ public class BoardCanvas extends View {
     public static final int YELLOW_PLAYER = 3;
 
     // ===== Pawn Positions =====
-    private Point[] redPawnPositions;
-    private Point[] greenPawnPositions;
-    private Point[] bluePawnPositions;
-    private Point[] yellowPawnPositions;
+    private Point[][] PawnPositions; //player, 0-3
 
     // ===== Pawn Bitmaps =====
-    private Bitmap[] redPawnBitmaps;
-    private Bitmap[] greenPawnBitmaps;
-    private Bitmap[] bluePawnBitmaps;
-    private Bitmap[] yellowPawnBitmaps;
+    private Bitmap[][] PawnBitmaps; //player, 0-3
+
 
     // ===== Pawn Selection =====
     private int selectedPawnIndex = -1; //0 to 3
@@ -50,49 +48,54 @@ public class BoardCanvas extends View {
     public BoardCanvas(Context context) {
         super(context);
         this.context = context;
+        gameLogic = new GameLogic();
+
+        PawnPositions = new Point[4][4];
+
 
         // Initialize red pawn positions
-        redPawnPositions = new Point[4];
-        redPawnPositions[0] = new Point(2,2);
-        redPawnPositions[1] = new Point(3,2);
-        redPawnPositions[2] = new Point(2,3);
-        redPawnPositions[3] = new Point(3,3);
+        PawnPositions[RED_PLAYER][0] = new Point(2,2);
+        PawnPositions[RED_PLAYER][1] = new Point(3,2);
+        PawnPositions[RED_PLAYER][2] = new Point(2,3);
+        PawnPositions[RED_PLAYER][3] = new Point(3,3);
 
         // Initialize green pawn positions
-        greenPawnPositions = new Point[4];
-        greenPawnPositions[0] = new Point(11,2);
-        greenPawnPositions[1] = new Point(12,2);
-        greenPawnPositions[2] = new Point(11,3);
-        greenPawnPositions[3] = new Point(12,3);
+        PawnPositions[GREEN_PLAYER][0] = new Point(11,2);
+        PawnPositions[GREEN_PLAYER][1] = new Point(12,2);
+        PawnPositions[GREEN_PLAYER][2] = new Point(11,3);
+        PawnPositions[GREEN_PLAYER][3] = new Point(12,3);
 
         // Initialize blue pawn positions
-        bluePawnPositions = new Point[4];
-        bluePawnPositions[0] = new Point(2,11);
-        bluePawnPositions[1] = new Point(3,11);
-        bluePawnPositions[2] = new Point(2,12);
-        bluePawnPositions[3] = new Point(3,12);
+        PawnPositions[BLUE_PLAYER][0] = new Point(2,11);
+        PawnPositions[BLUE_PLAYER][1] = new Point(3,11);
+        PawnPositions[BLUE_PLAYER][2] = new Point(2,12);
+        PawnPositions[BLUE_PLAYER][3] = new Point(3,12);
 
         // Initialize yellow pawn positions
-        yellowPawnPositions = new Point[4];
-        yellowPawnPositions[0] = new Point(11,11);
-        yellowPawnPositions[1] = new Point(12,11);
-        yellowPawnPositions[2] = new Point(11,12);
-        yellowPawnPositions[3] = new Point(12,12);
+        PawnPositions[YELLOW_PLAYER][0] = new Point(11,11);
+        PawnPositions[YELLOW_PLAYER][1] = new Point(12,11);
+        PawnPositions[YELLOW_PLAYER][2] = new Point(11,12);
+        PawnPositions[YELLOW_PLAYER][3] = new Point(12,12);
 
         // Enable touch events
         setClickable(true);
 
         // Initialize bitmap arrays
-        redPawnBitmaps = new Bitmap[4];
-        greenPawnBitmaps = new Bitmap[4];
-        bluePawnBitmaps = new Bitmap[4];
-        yellowPawnBitmaps = new Bitmap[4];
+        PawnBitmaps = new Bitmap[4][4];
 
         // Load pawn bitmap resources
-        for(int i = 0; i < 4; i++) redPawnBitmaps[i] = BitmapFactory.decodeResource(getResources(), R.drawable.red_pawn);
-        for(int i = 0; i < 4; i++) greenPawnBitmaps[i] = BitmapFactory.decodeResource(getResources(), R.drawable.green_pawn);
-        for(int i = 0; i < 4; i++) bluePawnBitmaps[i] = BitmapFactory.decodeResource(getResources(), R.drawable.blue_pawn);
-        for(int i = 0; i < 4; i++) yellowPawnBitmaps[i] = BitmapFactory.decodeResource(getResources(), R.drawable.yellow_pawn);
+        for(int i = 0; i < 4; i++) PawnBitmaps[RED_PLAYER][i] = BitmapFactory.decodeResource(getResources(), R.drawable.red_pawn);
+        for(int i = 0; i < 4; i++) PawnBitmaps[GREEN_PLAYER][i] = BitmapFactory.decodeResource(getResources(), R.drawable.green_pawn);
+        for(int i = 0; i < 4; i++) PawnBitmaps[BLUE_PLAYER][i] = BitmapFactory.decodeResource(getResources(), R.drawable.blue_pawn);
+        for(int i = 0; i < 4; i++) PawnBitmaps[YELLOW_PLAYER][i] = BitmapFactory.decodeResource(getResources(), R.drawable.yellow_pawn);
+    }
+
+    /**
+     * Get a reference to the logic class
+     * @return the logic class
+     */
+    public GameLogic getLogic() {
+        return gameLogic;
     }
 
     /**
@@ -145,7 +148,7 @@ public class BoardCanvas extends View {
 
     /**
      * Handle touch events on the game board
-     * First touch selects a pawn, second touch moves the selected pawn
+     * Handles pawn selection when game logic is waiting for it
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -155,56 +158,27 @@ public class BoardCanvas extends View {
 
         Point touchPoint = getBoardPosition(event.getX(), event.getY());
 
-        // If no pawn is selected, try to select one
-        if (selectedPawnIndex == -1 || selectedPawnColor == -1) {
-            selectedPawnColor=-1;
-            selectedPawnIndex=-1;
+        // Check if we're waiting for pawn selection during a game round
+        if (gameLogic.isWaitingForPawnSelection()) {
+            // Only allow selection of current player's pawns
+            int currentPlayer = gameLogic.getCurrentPlayer();
 
-            // Check all pawns to see if one was touched
-            for (int i = 0; i < 4; i++){
-                if(isNearPawn(touchPoint, redPawnPositions[i])){
-                    selectedPawnIndex=i;
-                    selectedPawnColor=RED_PLAYER;
+            for (int i = 0; i < 4; i++) {
+                if (isNearPawn(touchPoint, PawnPositions[currentPlayer][i])) {
+                    // Set the selected pawn in game logic
+                    gameLogic.setPawnSelection(i);
+
+                    // Redraw the board
+                    invalidate();
+                    return true;
                 }
             }
-            for (int i = 0; i < 4; i++){
-                if(isNearPawn(touchPoint, greenPawnPositions[i])) {
-                    selectedPawnIndex = i;
-                    selectedPawnColor = GREEN_PLAYER;
-                }
-            }
-            for (int i = 0; i < 4; i++){
-                if(isNearPawn(touchPoint, bluePawnPositions[i])){
-                    selectedPawnIndex=i;
-                    selectedPawnColor=BLUE_PLAYER;
-                }
-            }
-            for (int i = 0; i < 4; i++){
-                if(isNearPawn(touchPoint, yellowPawnPositions[i])){
-                    selectedPawnIndex=i;
-                    selectedPawnColor=YELLOW_PLAYER;
-                }
-            }
+
+            return true;
         }
-        // If a pawn is already selected, move it
-        else {
-            switch (selectedPawnColor) {
-                case 0:
-                    redPawnPositions[selectedPawnIndex] = touchPoint;
-                    break;
-                case 1:
-                    greenPawnPositions[selectedPawnIndex] = touchPoint;
-                    break;
-                case 2:
-                    bluePawnPositions[selectedPawnIndex] = touchPoint;
-                    break;
-                case 3:
-                    yellowPawnPositions[selectedPawnIndex] = touchPoint;
-                    break;
-            }
-            selectedPawnIndex = -1;
-            selectedPawnColor = -1;
-        }
+
+        // Handle default behavior otherwise (for debugging/testing)
+        // This code would only run when not actively playing a round
 
         invalidate();
         return true;
@@ -217,48 +191,65 @@ public class BoardCanvas extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        // First, synchronize pawn positions with the game logic
+        for (int color = 0; color < 4; color++) {
+            for (int i = 0; i < 4; i++) {
+                // Get the current position from game logic
+                Point logicPosition = gameLogic.getPawnBoardPosition(color, i);
+                // Update our position tracking array
+                if (logicPosition != null) {
+                    PawnPositions[color][i] = logicPosition;
+                }
+            }
+        }
+
         int incx = canvas.getWidth()/16;
-        float aspectRatio = (float) yellowPawnBitmaps[0].getHeight() / yellowPawnBitmaps[0].getWidth();
+        float aspectRatio = (float) PawnBitmaps[3][0].getHeight() / PawnBitmaps[3][0].getWidth();
         int desiredWidth = incx;
         int desiredHeight = (int) (desiredWidth * aspectRatio);
 
-        // Draw red pawns
-        for (int i = 0; i < 4; i++){
-            Bitmap resized = Bitmap.createScaledBitmap(redPawnBitmaps[i], desiredWidth, desiredHeight, true);
-            canvas.drawBitmap(resized, getPixelsCordX(canvas, redPawnPositions[i].x),
-                    getPixelsCordY(canvas, redPawnPositions[i].y), null);
-        }
-
-        // Draw green pawns
-        for (int i = 0; i < 4; i++){
-            Bitmap resized = Bitmap.createScaledBitmap(greenPawnBitmaps[i], desiredWidth, desiredHeight, true);
-            canvas.drawBitmap(resized, getPixelsCordX(canvas, greenPawnPositions[i].x),
-                    getPixelsCordY(canvas, greenPawnPositions[i].y), null);
-        }
-
-        // Draw blue pawns
-        for (int i = 0; i < 4; i++){
-            Bitmap resized = Bitmap.createScaledBitmap(bluePawnBitmaps[i], desiredWidth, desiredHeight, true);
-            canvas.drawBitmap(resized, getPixelsCordX(canvas, bluePawnPositions[i].x),
-                    getPixelsCordY(canvas, bluePawnPositions[i].y), null);
-        }
-
-        // Draw yellow pawns
-        for (int i = 0; i < 4; i++){
-            Bitmap resized = Bitmap.createScaledBitmap(yellowPawnBitmaps[i], desiredWidth, desiredHeight, true);
-            canvas.drawBitmap(resized, getPixelsCordX(canvas, yellowPawnPositions[i].x),
-                    getPixelsCordY(canvas, yellowPawnPositions[i].y), null);
-        }
-
-        // Draw highlight around selected pawn
-        if (selectedPawnIndex != -1 && selectedPawnColor != -1) {
-            Point selectedPosition = null;
-            switch (selectedPawnColor) {
-                case 0: selectedPosition = redPawnPositions[selectedPawnIndex]; break;
-                case 1: selectedPosition = greenPawnPositions[selectedPawnIndex]; break;
-                case 2: selectedPosition = bluePawnPositions[selectedPawnIndex]; break;
-                case 3: selectedPosition = yellowPawnPositions[selectedPawnIndex]; break;
+        // Draw pawns
+        for (int color = 0; color < 4; color++) {
+            for (int i = 0; i < 4; i++) {
+                Bitmap resized = Bitmap.createScaledBitmap(PawnBitmaps[color][i], desiredWidth, desiredHeight, true);
+                canvas.drawBitmap(resized, getPixelsCordX(canvas, PawnPositions[color][i].x),
+                        getPixelsCordY(canvas, PawnPositions[color][i].y), null);
             }
+        }
+
+        // Draw highlight around selected pawn if game is waiting for selection
+        if (gameLogic.isWaitingForPawnSelection()) {
+            int currentPlayer = gameLogic.getCurrentPlayer();
+
+            // Highlight movable pawns
+            for (int i = 0; i < 4; i++) {
+                boolean canMove = false;
+
+                // Check if this pawn can be moved
+                if (gameLogic.isPawnInHome(currentPlayer, i) && gameLogic.getLastDiceRoll() == 6) {
+                    canMove = true;
+                } else if (!gameLogic.isPawnInHome(currentPlayer, i) && !gameLogic.isPawnFinished(currentPlayer, i)) {
+                    canMove = true;
+                }
+
+                if (canMove) {
+                    Point position = PawnPositions[currentPlayer][i];
+                    Paint highlightPaint = new Paint();
+                    highlightPaint.setStyle(Paint.Style.STROKE);
+                    highlightPaint.setColor(Color.WHITE);
+                    highlightPaint.setStrokeWidth(5);
+
+                    float x = getPixelsCordX(canvas, position.x);
+                    float y = getPixelsCordY(canvas, position.y);
+                    float radius = canvas.getWidth() / 32;
+                    canvas.drawCircle(x, y, radius, highlightPaint);
+                }
+            }
+        }
+
+        // Draw highlight around selected pawn (existing code)
+        if (selectedPawnIndex != -1 && selectedPawnColor != -1) {
+            Point selectedPosition = PawnPositions[selectedPawnColor][selectedPawnIndex];
             if (selectedPosition != null) {
                 Paint highlightPaint = new Paint();
                 highlightPaint.setStyle(Paint.Style.STROKE);
