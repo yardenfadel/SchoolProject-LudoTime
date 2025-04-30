@@ -6,6 +6,8 @@
  */
 package com.example.ludotime;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -21,16 +23,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.Random;
 
-public class ActivityGameBot extends AppCompatActivity {
+public class ActivityGameLocal extends AppCompatActivity {
     // ===== Game Elements =====
     BoardCanvas board;
     GameLogic gameLogic;
@@ -43,6 +41,9 @@ public class ActivityGameBot extends AppCompatActivity {
     private Random random = new Random();
     private boolean isRolling = false;
 
+    // ===== Scoreboard elements =====
+    private boolean gameEnded = false;
+
     // Player color names for the toast message
     private final String[] playerColors = {"Red", "Green", "Yellow", "Blue"};
 
@@ -52,10 +53,13 @@ public class ActivityGameBot extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_bot);
+        setContentView(R.layout.activity_game_local);
 
-        // Initialize game board
-        board = new BoardCanvas(this);
+        // Set to true for quick testing, false for normal gameplay
+        boolean testMode = true; // TOGGLE THIS FOR TESTING
+
+        // Initialize game board with test mode
+        board = new BoardCanvas(this, testMode);
         gameLogic = board.getLogic();
         FrameLayout frameLayout = findViewById(R.id.board_frame);
         frameLayout.addView(board);
@@ -68,6 +72,11 @@ public class ActivityGameBot extends AppCompatActivity {
 
         // Initialize dice appearance
         updateDiceAppearance();
+
+        // Show a toast to indicate test mode is active (optional)
+        if (testMode) {
+            Toast.makeText(this, "Test Mode Active", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -124,7 +133,7 @@ public class ActivityGameBot extends AppCompatActivity {
 
         // Generate final dice value (1-6)
         //final int finalDiceValue = random.nextInt(6) + 1;
-        final int finalDiceValue = 6;
+        final int finalDiceValue = random.nextInt(2) + 5;
 
         // Create blinking animation for dice value
         AlphaAnimation blinkAnimation = new AlphaAnimation(0.2f, 1.0f);
@@ -175,6 +184,9 @@ public class ActivityGameBot extends AppCompatActivity {
                     finalAnimation.setDuration(50);
                     diceValues[playerIndex].startAnimation(finalAnimation);
 
+                    // Make sure the game logic knows whose turn it is
+                    gameLogic.setCurrentPlayer(currentPlayerTurn);
+
                     // Handle game logic based on dice roll value
                     gameLogic.setDiceRoll(finalDiceValue);
 
@@ -188,17 +200,31 @@ public class ActivityGameBot extends AppCompatActivity {
                     int winnerIndex = gameLogic.getWinner();
                     if (winnerIndex != -1) {
                         // A player has won, show toast message
-                        String winnerMessage = playerColors[winnerIndex] + " player has won the game!";
-                        Toast.makeText(ActivityGameBot.this, winnerMessage, Toast.LENGTH_LONG).show();
+                        String winnerMessage = playerColors[winnerIndex] + " player finished in position " +
+                                gameLogic.getPlayerPosition(winnerIndex) + "!";
+                        Toast.makeText(ActivityGameLocal.this, winnerMessage, Toast.LENGTH_LONG).show();
 
-                        // Disable all roll buttons as game is over
-                        for (Button button : rollButtons) {
-                            button.setEnabled(false);
+                        // Debug toast to show winners count
+                        Toast.makeText(ActivityGameLocal.this,
+                                "Winners count: " + gameLogic.getWinnersDebugInfo(),
+                                Toast.LENGTH_SHORT).show();
+
+                        // Check if this is the 3rd winner (game over)
+                        if (gameLogic.isGameOver()) {
+                            // Game is over, show scoreboard
+                            gameEnded = true;
+                            showScoreboard();
+
+                            // Disable all roll buttons as game is over
+                            for (Button button : rollButtons) {
+                                button.setEnabled(false);
+                            }
+
+                            // Reset rolling state
+                            isRolling = false;
+                            return;
                         }
 
-                        // Reset rolling state
-                        isRolling = false;
-                        return;
                     }
 
                     // Only proceed to next turn if round is complete (no selection needed)
@@ -222,15 +248,26 @@ public class ActivityGameBot extends AppCompatActivity {
                                     int winnerIndex = gameLogic.getWinner();
                                     if (winnerIndex != -1) {
                                         // A player has won, show toast message
-                                        String winnerMessage = playerColors[winnerIndex] + " player has won the game!";
-                                        Toast.makeText(ActivityGameBot.this, winnerMessage, Toast.LENGTH_LONG).show();
+                                        String winnerMessage = playerColors[winnerIndex] + " player finished in position " +
+                                                gameLogic.getPlayerPosition(winnerIndex) + "!";
+                                        Toast.makeText(ActivityGameLocal.this, winnerMessage, Toast.LENGTH_LONG).show();
 
-                                        // Disable all roll buttons as game is over
-                                        for (Button button : rollButtons) {
-                                            button.setEnabled(false);
+                                        // Check if this is the 3rd winner (game over)
+                                        if (gameLogic.isGameOver()) {
+                                            // Game is over, show scoreboard
+                                            gameEnded = true;
+                                            showScoreboard();
+
+                                            // Disable all roll buttons as game is over
+                                            for (Button button : rollButtons) {
+                                                button.setEnabled(false);
+                                            }
+                                        } else {
+                                            // Continue to next player
+                                            nextPlayerTurn();
                                         }
                                     } else {
-                                        // Move to next player
+                                        // No winner, move to next player
                                         nextPlayerTurn();
                                     }
                                 } else {
@@ -256,8 +293,25 @@ public class ActivityGameBot extends AppCompatActivity {
         // Disable current player's roll button
         rollButtons[currentPlayerTurn].setEnabled(false);
 
-        // Move to next player
-        currentPlayerTurn = (currentPlayerTurn + 1) % 4;
+        // Find the next player who hasn't won yet
+        int nextPlayer = (currentPlayerTurn + 1) % 4;
+        int checkedPlayers = 0;
+
+        // Keep searching until we find a player who hasn't won yet or we've checked all players
+        while (gameLogic.hasPlayerWon(nextPlayer) && checkedPlayers < 4) {
+            nextPlayer = (nextPlayer + 1) % 4;
+            checkedPlayers++;
+        }
+
+        // If all players have won or game is over, end the game
+        if (checkedPlayers >= 4 || gameLogic.isGameOver()) {
+            gameEnded = true;
+            showScoreboard();
+            return;
+        }
+
+        // Update current player
+        currentPlayerTurn = nextPlayer;
 
         // Update active player UI
         setActivePlayer(currentPlayerTurn);
@@ -321,9 +375,78 @@ public class ActivityGameBot extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuReturn) {
-            Intent intent = new Intent(ActivityGameBot.this, MainActivity.class);
+            Intent intent = new Intent(ActivityGameLocal.this, MainActivity.class);
             startActivity(intent);
         }
         return true;
+    }
+
+
+    /**
+     * Display the final scoreboard showing player rankings
+     */
+    private void showScoreboard() {
+        // Create a dialog to show the scoreboard
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Game Over - Final Standings");
+
+        // Build scoreboard text
+        StringBuilder scoreText = new StringBuilder();
+        int[] winnerOrder = gameLogic.getWinnerOrder();
+        int winnersCount = gameLogic.getWinnersCount(); // Get the count from gameLogic
+
+        // Add the winners in order
+        for (int i = 0; i < winnersCount; i++) {
+            if (winnerOrder[i] != -1) {
+                scoreText.append(i + 1).append(getOrdinalSuffix(i + 1)).append(" Place: ")
+                        .append(playerColors[winnerOrder[i]])
+                        .append("\n");
+            }
+        }
+
+        // Add any remaining players as "Not Finished"
+        for (int player = 0; player < 4; player++) {
+            boolean found = false;
+            for (int i = 0; i < winnersCount; i++) {
+                if (winnerOrder[i] == player) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                scoreText.append("Not Finished: ").append(playerColors[player]).append("\n");
+            }
+        }
+
+        builder.setMessage(scoreText.toString());
+        builder.setPositiveButton("Return to Main Menu", (dialog, which) -> {
+            Intent intent = new Intent(ActivityGameLocal.this, MainActivity.class);
+            startActivity(intent);
+        });
+
+        builder.setCancelable(false); // Prevent dismissing the dialog
+        builder.show();
+    }
+
+    /**
+     * Get the ordinal suffix for a number (1st, 2nd, 3rd, etc.)
+     *
+     * @param n The number to get a suffix for
+     * @return The ordinal suffix
+     */
+    private String getOrdinalSuffix(int n) {
+        if (n >= 11 && n <= 13) {
+            return "th";
+        }
+        switch (n % 10) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
     }
 }

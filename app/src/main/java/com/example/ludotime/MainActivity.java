@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -77,19 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bAgainstOnline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ActivityGameBot.class);
+                Intent intent = new Intent(MainActivity.this, ActivityGameLocal.class);
                 startActivity(intent);
                 //Toast.makeText(MainActivity.this, "Online Mode", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Bot mode button
-        Button bAgainstBot = findViewById(R.id.homePage_botMode);
-        bAgainstBot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ActivityGameBot.class);
-                startActivity(intent);
             }
         });
 
@@ -98,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bAgainstLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ActivityGameBot.class);
+                Intent intent = new Intent(MainActivity.this, ActivityGameLocal.class);
                 startActivity(intent);
                 //Toast.makeText(MainActivity.this, "Local Mode", Toast.LENGTH_SHORT).show();
             }

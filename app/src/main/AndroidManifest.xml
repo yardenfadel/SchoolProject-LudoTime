@@ -27,7 +27,7 @@
             android:name=".ActivityAbout"
             android:exported="false" />
         <activity
-            android:name=".ActivityGameBot"
+            android:name=".ActivityGameLocal"
             android:exported="false" />
         <activity
             android:name=".ActivitySettings"

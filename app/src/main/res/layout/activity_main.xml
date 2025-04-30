@@ -71,27 +71,7 @@
             android:textColor="#FFFFFF" />
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardBot"
-        android:layout_width="280dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="24dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardOnline">
 
-        <Button
-            android:id="@+id/homePage_botMode"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#4CAF50"
-            android:text="AGAINST BOT"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
-    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardLocal"
@@ -102,7 +82,7 @@
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardBot">
+        app:layout_constraintTop_toBottomOf="@+id/cardOnline">
 
         <Button
             android:id="@+id/homePage_localMode"

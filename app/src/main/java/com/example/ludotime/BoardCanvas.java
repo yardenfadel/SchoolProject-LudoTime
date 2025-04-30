@@ -44,39 +44,65 @@ public class BoardCanvas extends View {
      * Constructor initializes the game board with pawns in their starting positions
      *
      * @param context Application context
+     * @param testMode (false for normal game)
      */
-    public BoardCanvas(Context context) {
+    public BoardCanvas(Context context, boolean testMode) {
         super(context);
         this.context = context;
-        gameLogic = new GameLogic();
-
+        gameLogic = new GameLogic(testMode);
         PawnPositions = new Point[4][4];
 
+        if(!testMode) {
+            // Initialize red pawn positions
+            PawnPositions[RED_PLAYER][0] = new Point(2, 2);
+            PawnPositions[RED_PLAYER][1] = new Point(3, 2);
+            PawnPositions[RED_PLAYER][2] = new Point(2, 3);
+            PawnPositions[RED_PLAYER][3] = new Point(3, 3);
 
-        // Initialize red pawn positions
-        PawnPositions[RED_PLAYER][0] = new Point(2,2);
-        PawnPositions[RED_PLAYER][1] = new Point(3,2);
-        PawnPositions[RED_PLAYER][2] = new Point(2,3);
-        PawnPositions[RED_PLAYER][3] = new Point(3,3);
+            // Initialize green pawn positions
+            PawnPositions[GREEN_PLAYER][0] = new Point(11, 2);
+            PawnPositions[GREEN_PLAYER][1] = new Point(12, 2);
+            PawnPositions[GREEN_PLAYER][2] = new Point(11, 3);
+            PawnPositions[GREEN_PLAYER][3] = new Point(12, 3);
 
-        // Initialize green pawn positions
-        PawnPositions[GREEN_PLAYER][0] = new Point(11,2);
-        PawnPositions[GREEN_PLAYER][1] = new Point(12,2);
-        PawnPositions[GREEN_PLAYER][2] = new Point(11,3);
-        PawnPositions[GREEN_PLAYER][3] = new Point(12,3);
+            // Initialize blue pawn positions
+            PawnPositions[BLUE_PLAYER][0] = new Point(2, 11);
+            PawnPositions[BLUE_PLAYER][1] = new Point(3, 11);
+            PawnPositions[BLUE_PLAYER][2] = new Point(2, 12);
+            PawnPositions[BLUE_PLAYER][3] = new Point(3, 12);
 
-        // Initialize blue pawn positions
-        PawnPositions[BLUE_PLAYER][0] = new Point(2,11);
-        PawnPositions[BLUE_PLAYER][1] = new Point(3,11);
-        PawnPositions[BLUE_PLAYER][2] = new Point(2,12);
-        PawnPositions[BLUE_PLAYER][3] = new Point(3,12);
+            // Initialize yellow pawn positions
+            PawnPositions[YELLOW_PLAYER][0] = new Point(11, 11);
+            PawnPositions[YELLOW_PLAYER][1] = new Point(12, 11);
+            PawnPositions[YELLOW_PLAYER][2] = new Point(11, 12);
+            PawnPositions[YELLOW_PLAYER][3] = new Point(12, 12);
+        }
+        else{
 
-        // Initialize yellow pawn positions
-        PawnPositions[YELLOW_PLAYER][0] = new Point(11,11);
-        PawnPositions[YELLOW_PLAYER][1] = new Point(12,11);
-        PawnPositions[YELLOW_PLAYER][2] = new Point(11,12);
-        PawnPositions[YELLOW_PLAYER][3] = new Point(12,12);
+            PawnPositions[RED_PLAYER][0] = new Point(2, 8);
+            PawnPositions[RED_PLAYER][1] = new Point(1, 8);
+            PawnPositions[RED_PLAYER][2] = new Point(0, 8);
+            PawnPositions[RED_PLAYER][3] = new Point(0, 7);
 
+            // Initialize green pawn positions
+            PawnPositions[GREEN_PLAYER][0] = new Point(6, 2);
+            PawnPositions[GREEN_PLAYER][1] = new Point(6, 1);
+            PawnPositions[GREEN_PLAYER][2] = new Point(6, 0);
+            PawnPositions[GREEN_PLAYER][3] = new Point(7, 0);
+
+            // Initialize yellow pawn positions
+            PawnPositions[YELLOW_PLAYER][0] = new Point(12, 6);
+            PawnPositions[YELLOW_PLAYER][1] = new Point(13, 6);
+            PawnPositions[YELLOW_PLAYER][2] = new Point(14, 6);
+            PawnPositions[YELLOW_PLAYER][3] = new Point(14, 7);
+
+            // Initialize blue pawn positions
+            PawnPositions[BLUE_PLAYER][0] = new Point(8, 12);
+            PawnPositions[BLUE_PLAYER][1] = new Point(8, 13);
+            PawnPositions[BLUE_PLAYER][2] = new Point(8, 14);
+            PawnPositions[BLUE_PLAYER][3] = new Point(7, 14);
+
+        }
         // Enable touch events
         setClickable(true);
 
@@ -88,6 +114,15 @@ public class BoardCanvas extends View {
         for(int i = 0; i < 4; i++) PawnBitmaps[GREEN_PLAYER][i] = BitmapFactory.decodeResource(getResources(), R.drawable.green_pawn);
         for(int i = 0; i < 4; i++) PawnBitmaps[BLUE_PLAYER][i] = BitmapFactory.decodeResource(getResources(), R.drawable.blue_pawn);
         for(int i = 0; i < 4; i++) PawnBitmaps[YELLOW_PLAYER][i] = BitmapFactory.decodeResource(getResources(), R.drawable.yellow_pawn);
+    }
+
+    /**
+     * Constructor initializes the game board with pawns in their starting positions
+     *
+     * @param context Application context
+     */
+    public BoardCanvas(Context context) {
+        this(context, false);
     }
 
     /**

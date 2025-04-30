@@ -56,19 +56,23 @@ public class GameLogic {
     private boolean waitingForPawnSelection;
     private int selectedPawn = -1;
 
+    // Track winners
+    private int[] winnerOrder = {-1, -1, -1, -1}; // Track order of winners
+    private int winnersCount = 0; // Count of winners so far
     /**
      * Constructor initializes the game state
+     * @param testMode Set to true to use the test setup for quicker finish
      */
-    public GameLogic() {
+    public GameLogic(boolean testMode) {
         // Start with player 1 (RED)
         currentPlayer = RED_PLAYER;
 
         // Initialize tracking arrays
         pawnInHome = new boolean[4][4];
         pawnFinished = new boolean[4][4];
-        pawnOnFinishLine = new boolean[4][4]; // Added: initialize pawnOnFinishLine array
+        pawnOnFinishLine = new boolean[4][4];
         pawnPositions = new int[4][4];
-        finalPathPositions = new int[4][4]; // Added: initialize finalPathPositions array
+        finalPathPositions = new int[4][4];
 
         // Initialize home coordinates
         homeCoordinates = new Point[4][4];
@@ -128,17 +132,98 @@ public class GameLogic {
         finalPathCoordinates[YELLOW_PLAYER][3] = new Point(10, 7);
         finalPathCoordinates[YELLOW_PLAYER][4] = new Point(9, 7);
 
-        // Set all pawns to be in home initially
-        for (int player = 0; player < 4; player++) {
-            for (int pawn = 0; pawn < 4; pawn++) {
-                pawnInHome[player][pawn] = true;
-                pawnFinished[player][pawn] = false;
-                pawnOnFinishLine[player][pawn] = false; // Added: initially not on finish line
-                pawnPositions[player][pawn] = -1;
-                finalPathPositions[player][pawn] = -1; // Added: initially not on final path
+        if (testMode) {
+            for (int player = 0; player < 4; player++) {
+                for (int pawn = 0; pawn < 4; pawn++) {
+                    pawnInHome[player][pawn] = false;
+                    pawnFinished[player][pawn] = false;
+                    pawnOnFinishLine[player][pawn] = false;
+                    finalPathPositions[player][pawn] = -1;
+
+                    //put before path
+                    pawnPositions[player][pawn] = (player*13+pawn+47)%52;
+                    System.out.println((player*13+pawn+47)%52 + " is th location for player" + player + "pawn: " + pawn);
+                }
+            }
+            setupTestState();
+        } else {
+            // Set all pawns to be in home initially
+            for (int player = 0; player < 4; player++) {
+                for (int pawn = 0; pawn < 4; pawn++) {
+                    pawnInHome[player][pawn] = true;
+                    pawnFinished[player][pawn] = false;
+                    pawnOnFinishLine[player][pawn] = false;
+                    pawnPositions[player][pawn] = -1;
+                    finalPathPositions[player][pawn] = -1;
+                }
             }
         }
 
+        diceRolled = false;
+        moveMade = false;
+        lastDiceRoll = 0;
+    }
+
+    /**
+     * Default constructor for normal game mode
+     */
+    public GameLogic() {
+        this(false);
+    }
+
+    /**
+     * Method to set up a test state where players are close to finishing
+     */
+    public void setupTestState() {
+        // Reset the current state first
+        for (int player = 0; player < 4; player++) {
+            for (int pawn = 0; pawn < 4; pawn++) {
+                pawnInHome[player][pawn] = false;
+                pawnFinished[player][pawn] = false;
+                pawnOnFinishLine[player][pawn] = false;
+                pawnPositions[player][pawn] = -1;
+                finalPathPositions[player][pawn] = -1;
+            }
+        }
+
+        // RED player - one pawn already finished, three on finish line
+        pawnFinished[RED_PLAYER][0] = true;
+        pawnOnFinishLine[RED_PLAYER][1] = true;
+        pawnOnFinishLine[RED_PLAYER][2] = true;
+        pawnOnFinishLine[RED_PLAYER][3] = true;
+        finalPathPositions[RED_PLAYER][1] = 4; // One step away from finish
+        finalPathPositions[RED_PLAYER][2] = 4; // One step away from finish
+        finalPathPositions[RED_PLAYER][3] = 4; // One step away from finish
+
+        // GREEN player - two pawns already finished, two on finish line
+        pawnFinished[GREEN_PLAYER][0] = true;
+        pawnFinished[GREEN_PLAYER][1] = true;
+        pawnOnFinishLine[GREEN_PLAYER][2] = true;
+        pawnOnFinishLine[GREEN_PLAYER][3] = true;
+        finalPathPositions[GREEN_PLAYER][2] = 3; // Two steps away from finish
+        finalPathPositions[GREEN_PLAYER][3] = 3; // Two steps away from finish
+
+        // YELLOW player - three pawns already finished, one on finish line
+        pawnFinished[YELLOW_PLAYER][0] = true;
+        pawnFinished[YELLOW_PLAYER][1] = true;
+        pawnFinished[YELLOW_PLAYER][2] = true;
+        pawnOnFinishLine[YELLOW_PLAYER][3] = true;
+        finalPathPositions[YELLOW_PLAYER][3] = 3; // Two steps away from finish
+
+        // BLUE player - all pawns on main track, but close to final path
+        pawnPositions[BLUE_PLAYER][0] = 36; // One step away from final path entry
+        pawnPositions[BLUE_PLAYER][1] = 36; // One step away from final path entry
+        pawnPositions[BLUE_PLAYER][2] = 35; // Two steps away from final path entry
+        pawnPositions[BLUE_PLAYER][3] = 35; // Two steps away from final path entry
+
+        // Reset winners
+        winnersCount = 0;
+        for (int i = 0; i < 4; i++) {
+            winnerOrder[i] = -1;
+        }
+
+        // Reset the game state
+        currentPlayer = RED_PLAYER;
         diceRolled = false;
         moveMade = false;
         lastDiceRoll = 0;
@@ -234,6 +319,10 @@ public class GameLogic {
         lastDiceRoll = value;
         diceRolled = true;
         moveMade = false;
+    }
+
+    public void setCurrentPlayer(int player){
+        currentPlayer=player;
     }
 
     /**
@@ -523,11 +612,16 @@ public class GameLogic {
 
             for (int pawn = 0; pawn < 4; pawn++) {
                 // Check if opponent pawn is on the same position and not in home, finished or on finish line
+                int currentPos = pawnPositions[player][pawn];
                 if (!pawnInHome[player][pawn] && !pawnFinished[player][pawn] &&
-                        !pawnOnFinishLine[player][pawn] && pawnPositions[player][pawn] == position) {
+                        !pawnOnFinishLine[player][pawn] && currentPos == position
+                            && currentPos != 8 && currentPos !=21 && currentPos !=34 && currentPos != 47 ) {
 
-                    //TODO: Safe squares are typically at positions 8, 21, 34, 47
-                    // Simplification: we're not implementing safe squares here
+
+                    if(player==0 && currentPos == 0) break;
+                    if(player==1 && currentPos == 13) break;
+                    if(player==2 && currentPos == 26) break;
+                    if(player==3 && currentPos == 39) break;
 
                     // Send the pawn back home
                     pawnInHome[player][pawn] = true;
@@ -535,6 +629,36 @@ public class GameLogic {
                 }
             }
         }
+    }
+
+    /**
+     * Check if the game is over (3 players have won)
+     * @return True if the game is over with 3 winners
+     */
+    public boolean isGameOver() {
+        return winnersCount >= 3; // Exactly 3 winners
+    }
+
+    /**
+     * Get the winner order array
+     * @return Array with player indices in order of winning (-1 for not finished)
+     */
+    public int[] getWinnerOrder() {
+        return winnerOrder;
+    }
+
+    /**
+     * Get the position a player finished in (1st, 2nd, 3rd, or not finished)
+     * @param player Player index to check
+     * @return Position (1, 2, 3) or 0 if not finished yet or 4 if last
+     */
+    public int getPlayerPosition(int player) {
+        for (int i = 0; i < winnerOrder.length; i++) {
+            if (winnerOrder[i] == player) {
+                return i + 1;
+            }
+        }
+        return 0; // Not finished yet
     }
 
     /**
@@ -552,17 +676,38 @@ public class GameLogic {
     }
 
     /**
-     * Check if the game is over (any player has won)
-     * @return Player index of winner, or -1 if no winner yet
+     * Check if a player is already in the winners list
+     * @param player Player index to check
+     * @return True if player is already in winners list
      */
-    //TODO: make game 3 won
+    private boolean isInWinnersList(int player) {
+        for (int i = 0; i < winnersCount; i++) {
+            if (winnerOrder[i] == player) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Track all winners
+     * @return Player index of the latest winner, or -1 if no new winner
+     */
     public int getWinner() {
         for (int player = 0; player < 4; player++) {
-            if (hasPlayerWon(player)) {
+            // Check if player has won and isn't already in winners list
+            if (hasPlayerWon(player) && !isInWinnersList(player)) {
+                // Add player to winners list
+                winnerOrder[winnersCount] = player;
+                winnersCount++;
+
+                // Debug message
+                System.out.println("Player " + player + " won! Total winners: " + winnersCount);
+
                 return player;
             }
         }
-        return -1;
+        return -1; // No new winner
     }
 
     /**
@@ -614,5 +759,25 @@ public class GameLogic {
         }
 
         return false;
+    }
+
+    /**
+     * Get debug information
+     */
+    public String getWinnersDebugInfo() {
+        StringBuilder info = new StringBuilder("Winners: ");
+        for (int i = 0; i < winnersCount; i++) {
+            info.append(winnerOrder[i]).append(", ");
+        }
+        info.append("Count: ").append(winnersCount);
+        return info.toString();
+    }
+
+    /**
+     * Get the current number of winners
+     * @return Number of players who have won so far
+     */
+    public int getWinnersCount() {
+        return winnersCount;
     }
 }
