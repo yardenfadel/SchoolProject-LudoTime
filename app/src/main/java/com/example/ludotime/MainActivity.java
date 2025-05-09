@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bAgainstOnline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ActivityGameLocal.class);
+                Intent intent = new Intent(MainActivity.this, ActivityLobby.class);
                 startActivity(intent);
                 //Toast.makeText(MainActivity.this, "Online Mode", Toast.LENGTH_SHORT).show();
             }

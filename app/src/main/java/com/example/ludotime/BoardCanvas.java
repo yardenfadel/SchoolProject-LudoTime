@@ -17,6 +17,8 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.ludotime.R;
+
 public class BoardCanvas extends View {
     // ===== Context =====
     Context context;
@@ -201,7 +203,7 @@ public class BoardCanvas extends View {
         // Check if we're waiting for pawn selection during a game round
         if (gameLogic.isWaitingForPawnSelection()) {
             // Only allow selection of current player's pawns
-            int currentPlayer = gameLogic.getCurrentPlayer();
+            int currentPlayer = gameLogic.getCurrentPlayerTurn();
 
             for (int i = 0; i < 4; i++) {
                 if (isNearPawn(touchPoint, PawnPositions[currentPlayer][i])) {
@@ -250,8 +252,8 @@ public class BoardCanvas extends View {
 
         // First, identify pawns on the same square
         int[][] pawnCountOnSquare = new int[16][16]; // Grid size is 16x16
-        int[][][] pawnIndexOnSquare = new int[16][16][8]; // Store up to 8 pawns per square (more than enough)
-        int[][][] pawnColorOnSquare = new int[16][16][8]; // Store the color of each pawn
+        int[][][] pawnIndexOnSquare = new int[16][16][16]; // Store up to 16 pawns per square
+        int[][][] pawnColorOnSquare = new int[16][16][16]; // Store the color of each pawn
 
         // Count pawns per square and store their indices
         for (int color = 0; color < 4; color++) {
@@ -349,7 +351,7 @@ public class BoardCanvas extends View {
 
         // Draw highlight around selected pawn if game is waiting for selection
         if (gameLogic.isWaitingForPawnSelection()) {
-            int currentPlayer = gameLogic.getCurrentPlayer();
+            int currentPlayer = gameLogic.getCurrentPlayerTurn();
             Paint highlightPaint = new Paint();
             highlightPaint.setStyle(Paint.Style.STROKE);
             highlightPaint.setColor(Color.WHITE);

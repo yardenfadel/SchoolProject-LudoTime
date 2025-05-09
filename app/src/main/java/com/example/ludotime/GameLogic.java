@@ -26,7 +26,7 @@ public class GameLogic {
     private static final int BOARD_SQUARES = 52;
 
     // ===== Game State =====
-    private int currentPlayer;
+    private int currentPlayerTurn;
     private int lastDiceRoll;
     private boolean diceRolled;
     private boolean moveMade;
@@ -65,7 +65,7 @@ public class GameLogic {
      */
     public GameLogic(boolean testMode) {
         // Start with player 1 (RED)
-        currentPlayer = RED_PLAYER;
+        currentPlayerTurn = RED_PLAYER;
 
         // Initialize tracking arrays
         pawnInHome = new boolean[4][4];
@@ -223,7 +223,7 @@ public class GameLogic {
         }
 
         // Reset the game state
-        currentPlayer = RED_PLAYER;
+        currentPlayerTurn = RED_PLAYER;
         diceRolled = false;
         moveMade = false;
         lastDiceRoll = 0;
@@ -256,11 +256,11 @@ public class GameLogic {
 
         // Now that we have a selection, complete the move
         if (selectedPawn != -1) {
-            movePawn(currentPlayer, selectedPawn);
+            movePawn(currentPlayerTurn, selectedPawn);
 
             // Only check for captures if pawn is not on final path
-            if (!pawnOnFinishLine[currentPlayer][selectedPawn]) {
-                checkForCaptures(currentPlayer, pawnPositions[currentPlayer][selectedPawn]);
+            if (!pawnOnFinishLine[currentPlayerTurn][selectedPawn]) {
+                checkForCaptures(currentPlayerTurn, pawnPositions[currentPlayerTurn][selectedPawn]);
             }
 
             nextTurn();
@@ -279,8 +279,8 @@ public class GameLogic {
      * Get the current player's turn
      * @return Player index (0-3)
      */
-    public int getCurrentPlayer() {
-        return currentPlayer;
+    public int getCurrentPlayerTurn() {
+        return currentPlayerTurn;
     }
 
     /**
@@ -321,15 +321,15 @@ public class GameLogic {
         moveMade = false;
     }
 
-    public void setCurrentPlayer(int player){
-        currentPlayer=player;
+    public void setCurrentPlayerTurn(int player){
+        currentPlayerTurn =player;
     }
 
     /**
      * Move to the next player's turn
      */
     public void nextTurn() {
-        currentPlayer = (currentPlayer + 1) % 4;
+        currentPlayerTurn = (currentPlayerTurn + 1) % 4;
         diceRolled = false;
         moveMade = false;
         lastDiceRoll = 0;
@@ -471,7 +471,7 @@ public class GameLogic {
      */
     public boolean movePawn(int player, int pawnIndex) {
         // Can only move current player's pawns after rolling dice
-        if (player != currentPlayer || !diceRolled || moveMade) {
+        if (player != currentPlayerTurn || !diceRolled || moveMade) {
             return false;
         }
 
@@ -743,7 +743,7 @@ public class GameLogic {
         // Check pawns in home (can only move with a 6)
         if (lastDiceRoll == EXIT_ROLL) {
             for (int pawn = 0; pawn < 4; pawn++) {
-                if (pawnInHome[currentPlayer][pawn]) {
+                if (pawnInHome[currentPlayerTurn][pawn]) {
                     return true; // Can exit home with a 6
                 }
             }
@@ -751,8 +751,8 @@ public class GameLogic {
 
         // Check pawns on board or on finish line
         for (int pawn = 0; pawn < 4; pawn++) {
-            if ((!pawnInHome[currentPlayer][pawn] && !pawnFinished[currentPlayer][pawn]) ||
-                    pawnOnFinishLine[currentPlayer][pawn]) {
+            if ((!pawnInHome[currentPlayerTurn][pawn] && !pawnFinished[currentPlayerTurn][pawn]) ||
+                    pawnOnFinishLine[currentPlayerTurn][pawn]) {
                 // This pawn can potentially move
                 return true;
             }

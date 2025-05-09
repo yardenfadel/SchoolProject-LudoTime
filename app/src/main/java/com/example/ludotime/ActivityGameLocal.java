@@ -1,12 +1,10 @@
 /**
- * ActivityGameBot.java
+ * ActivityGameLocal.java
  *
- * Game activity for playing Ludo against bots.
+ * Game activity for playing Ludo against local.
  * Handles game board, players' turns, and dice rolling mechanics.
  */
 package com.example.ludotime;
-
-import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +26,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.ludotime.R;
 
 import java.util.Random;
 
@@ -65,7 +65,7 @@ public class ActivityGameLocal extends AppCompatActivity {
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         // Set to true for quick testing, false for normal gameplay
-        boolean testMode = false; // TOGGLE THIS FOR TESTING
+        boolean testMode = true; // TOGGLE THIS FOR TESTING
 
         // Initialize game board with test mode
         board = new BoardCanvas(this, testMode);
@@ -225,7 +225,7 @@ public class ActivityGameLocal extends AppCompatActivity {
                     vibrateDevice(1);
 
                     // Make sure the game logic knows whose turn it is
-                    gameLogic.setCurrentPlayer(currentPlayerTurn);
+                    gameLogic.setCurrentPlayerTurn(currentPlayerTurn);
 
                     // Handle game logic based on dice roll value
                     gameLogic.setDiceRoll(finalDiceValue);
