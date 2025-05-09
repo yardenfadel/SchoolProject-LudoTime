@@ -142,7 +142,7 @@ public class GameLogic {
 
                     //put before path
                     pawnPositions[player][pawn] = (player*13+pawn+47)%52;
-                    //System.out.println((player*13+pawn+47)%52 + " is th location for player" + player + "pawn: " + pawn);
+                    System.out.println((player*13+pawn+47)%52 + " is th location for player" + player + "pawn: " + pawn);
                 }
             }
             setupTestState();

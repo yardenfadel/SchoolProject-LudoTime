@@ -1,18 +1,17 @@
 /**
- * ActivityGameLocal.java
+ * ActivityGameBot.java
  *
- * Game activity for playing Ludo against local.
+ * Game activity for playing Ludo against bots.
  * Handles game board, players' turns, and dice rolling mechanics.
  */
 package com.example.ludotime;
 
-import android.content.Context;
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +25,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.ludotime.R;
 
 import java.util.Random;
 
@@ -47,9 +44,6 @@ public class ActivityGameLocal extends AppCompatActivity {
     // ===== Scoreboard elements =====
     private boolean gameEnded = false;
 
-    // ===== Vibration element =====
-    private Vibrator vibrator;
-
     // Player color names for the toast message
     private final String[] playerColors = {"Red", "Green", "Yellow", "Blue"};
 
@@ -60,9 +54,6 @@ public class ActivityGameLocal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_local);
-
-        // Initialize vibrator service
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         // Set to true for quick testing, false for normal gameplay
         boolean testMode = true; // TOGGLE THIS FOR TESTING
@@ -117,34 +108,6 @@ public class ActivityGameLocal extends AppCompatActivity {
 
             // Initially disable all buttons except current player
             rollButtons[i].setEnabled(i == currentPlayerTurn);
-        }
-    }
-
-    /**
-     * Provides vibration feedback of different patterns
-     *
-     * @param pattern The vibration pattern to use (1 = dice roll, 2 = turn change)
-     */
-    private void vibrateDevice(int pattern) {
-        if (vibrator != null && vibrator.hasVibrator()) {
-            switch (pattern) {
-                case 1: // Dice roll feedback - single strong vibration
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
-                    } else {
-                        vibrator.vibrate(100);
-                    }
-                    break;
-                case 2: // Turn change feedback - double pulse vibration
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        long[] pattern2 = {0, 80, 80, 80};
-                        vibrator.vibrate(VibrationEffect.createWaveform(pattern2, -1));
-                    } else {
-                        long[] pattern2 = {0, 80, 80, 80};
-                        vibrator.vibrate(pattern2, -1);
-                    }
-                    break;
-            }
         }
     }
 
@@ -221,11 +184,8 @@ public class ActivityGameLocal extends AppCompatActivity {
                     finalAnimation.setDuration(50);
                     diceValues[playerIndex].startAnimation(finalAnimation);
 
-                    // Vibrate to indicate dice roll completion
-                    vibrateDevice(1);
-
                     // Make sure the game logic knows whose turn it is
-                    gameLogic.setCurrentPlayerTurn(currentPlayerTurn);
+                    gameLogic.setCurrentPlayer(currentPlayerTurn);
 
                     // Handle game logic based on dice roll value
                     gameLogic.setDiceRoll(finalDiceValue);
@@ -352,9 +312,6 @@ public class ActivityGameLocal extends AppCompatActivity {
 
         // Update current player
         currentPlayerTurn = nextPlayer;
-
-        // Vibrate to indicate turn change
-        vibrateDevice(2);
 
         // Update active player UI
         setActivePlayer(currentPlayerTurn);
