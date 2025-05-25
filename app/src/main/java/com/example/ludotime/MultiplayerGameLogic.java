@@ -1,11 +1,14 @@
 package com.example.ludotime;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 /**
  * MultiplayerGameLogic.java
  *
  * Similar to GameLogic, but handles multiplayer game state management.
+ * Uses ArrayLists for better Firebase compatibility and dynamic player management.
  */
 
 public class MultiplayerGameLogic extends GameLogic {
@@ -18,9 +21,9 @@ public class MultiplayerGameLogic extends GameLogic {
     private long lastUpdateTimestamp;
     private String gameId;             // 6-character unique code
     private String hostUserId;         // ID of the player who created the game
-    private boolean[] isReady;
-    private String[] playerID;
-    private String[] playerName;
+    private ArrayList<Boolean> isReady;
+    private ArrayList<String> playerID;
+    private ArrayList<String> playerName;
 
     public MultiplayerGameLogic(String hostUserId, String hostName, int maxPlayers, int hostColor) {
         this.hostUserId = hostUserId;
@@ -28,21 +31,26 @@ public class MultiplayerGameLogic extends GameLogic {
         this.currentPlayersNumber = 1;
         this.gameStarted = false;
         this.gameId = generateGameId();
-        this.isReady = new boolean[4];
-        this.playerID = new String[4];
-        this.playerName = new String[4];
-        for(int i = 0; i < 4; i++){
-            this.isReady[i] = false;
-            this.playerID[i] = null;
-            this.playerName[i] = "Unknown";
 
-        }
-        this.playerID[hostColor] = hostUserId;
-        this.playerName[hostColor] = hostName;
-        this.isReady[hostColor] = true;
+        // Initialize ArrayLists with default values for 4 players
+        this.isReady = new ArrayList<>(Collections.nCopies(4, false));
+        this.playerID = new ArrayList<>(Collections.nCopies(4, (String) null));
+        this.playerName = new ArrayList<>(Collections.nCopies(4, "Unknown"));
+
+        // Set host player data
+        this.playerID.set(hostColor, hostUserId);
+        this.playerName.set(hostColor, hostName);
+        this.isReady.set(hostColor, true);
         this.lastUpdateTimestamp = System.currentTimeMillis();
     }
 
+    // Default constructor for Firebase deserialization
+    public MultiplayerGameLogic() {
+        // Initialize ArrayLists with default values
+        this.isReady = new ArrayList<>(Collections.nCopies(4, false));
+        this.playerID = new ArrayList<>(Collections.nCopies(4, (String) null));
+        this.playerName = new ArrayList<>(Collections.nCopies(4, "Unknown"));
+    }
 
     /**
      * Generates a random 6-character game ID for room identification
@@ -61,6 +69,7 @@ public class MultiplayerGameLogic extends GameLogic {
         return gameId.toString();
     }
 
+    // Getters and Setters
     public GameLogic getGameLogic() {
         return gameLogic;
     }
@@ -117,27 +126,27 @@ public class MultiplayerGameLogic extends GameLogic {
         this.gameId = gameId;
     }
 
-    public boolean[] getIsReady() {
+    public ArrayList<Boolean> getIsReady() {
         return isReady;
     }
 
-    public void setIsReady(boolean[] isReady) {
+    public void setIsReady(ArrayList<Boolean> isReady) {
         this.isReady = isReady;
     }
 
-    public String[] getPlayerID() {
+    public ArrayList<String> getPlayerID() {
         return playerID;
     }
 
-    public void setPlayerID(String[] playerID) {
+    public void setPlayerID(ArrayList<String> playerID) {
         this.playerID = playerID;
     }
 
-    public String[] getPlayerName() {
+    public ArrayList<String> getPlayerName() {
         return playerName;
     }
 
-    public void setPlayerName(String[] playerName) {
+    public void setPlayerName(ArrayList<String> playerName) {
         this.playerName = playerName;
     }
 }

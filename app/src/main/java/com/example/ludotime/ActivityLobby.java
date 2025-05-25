@@ -23,7 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * ActivityLobby.java
@@ -37,7 +37,7 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
     //Firebase
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private FirebaseGameManagerOutdated gameManager;
+    private FirebaseGameManager gameManager;
 
     // UI Components
     private CardView menuCard;
@@ -72,7 +72,7 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
     private boolean isHost = false;
     private boolean isReady = false;
     private boolean allPlayersReady = false;
-    private MultiplayerGameOutdated currentGame;
+    private MultiplayerGameLogic currentGame;
 
     /**
      * Initializes the activity, sets up the UI components and event listeners
@@ -103,7 +103,7 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         }
 
         // Initialize Firebase Game Manager
-        gameManager = new FirebaseGameManagerOutdated(currentUser.getUid(), this);
+        gameManager = new FirebaseGameManager(currentUser.getUid(), this);
 
         // Initialize UI components
         initializeViews();
@@ -260,10 +260,8 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         // Set host flag
         isHost = true;
 
-        // Create game in Firebase with player name from Firebase Auth
-        //TODO: selected color gameManager.createGame(playerName, selectedColor);
-        gameManager.createGame(playerName);
-
+        // Create game in Firebase
+        gameManager.createGame();
 
         // Update UI
         createGameDialog.setVisibility(View.GONE);
@@ -283,7 +281,6 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
 
         // Join game in Firebase with player name from Firebase Auth
         gameManager.joinGame(gameCode, playerName);
-        //TODO: selected color gameManager.createGame(playerName, selectedColor);
 
         // Update UI
         joinGameDialog.setVisibility(View.GONE);
@@ -334,7 +331,7 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
             return;
         }
 
-        if (currentGame.getCurrentPlayers() < 2) {
+        if (currentGame.getCurrentPlayersNumber() < 2) {
             Toast.makeText(this, "Need at least 2 players to start", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -366,7 +363,7 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
      * Updates the player list UI based on current game state
      */
     private void updatePlayerList() {
-        if (currentGame == null || currentGame.getPlayers() == null) return;
+        if (currentGame == null) return;
 
         // Clear existing player views
         playersContainer.removeAllViews();
@@ -375,8 +372,12 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         allPlayersReady = true;
 
         // Add player entries
-        for (Map.Entry<String, MultiplayerGameOutdated.GamePlayer> entry : currentGame.getPlayers().entrySet()) {
-            MultiplayerGameOutdated.GamePlayer player = entry.getValue();
+        ArrayList<String> playerIDs = currentGame.getPlayerID();
+        ArrayList<String> playerNames = currentGame.getPlayerName();
+        ArrayList<Boolean> isReady = currentGame.getIsReady();
+
+        for (int i = 0; i < playerIDs.size(); i++) {
+            if (playerIDs.get(i) == null) continue;
 
             // Create player entry view
             View playerView = getLayoutInflater().inflate(R.layout.player_list_item, playersContainer, false);
@@ -386,11 +387,11 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
             ImageView statusIcon = playerView.findViewById(R.id.player_status);
             ImageView colorIcon = playerView.findViewById(R.id.player_color);
 
-            nameText.setText(player.getDisplayName());
+            nameText.setText(playerNames.get(i));
 
-            // Set color indicator based on player color
+            // Set color indicator based on player color (which is their index)
             int colorRes;
-            switch (player.getPlayerColor()) {
+            switch (i) {
                 case 0: // Red
                     colorRes = R.drawable.red_pawn;
                     break;
@@ -409,11 +410,11 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
             colorIcon.setImageResource(colorRes);
 
             // Set ready status icon
-            statusIcon.setImageResource(player.isReady() ?
+            statusIcon.setImageResource(isReady.get(i) ?
                     R.drawable.ic_check_circle : R.drawable.ic_pending);
 
             // Track if all non-host players are ready
-            if (!player.getUserId().equals(currentGame.getHostUserId()) && !player.isReady()) {
+            if (!playerIDs.get(i).equals(currentGame.getHostUserId()) && !isReady.get(i)) {
                 allPlayersReady = false;
             }
 
@@ -423,7 +424,7 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
 
         // Update start button status if host
         if (isHost) {
-            startGameButton.setEnabled(allPlayersReady && currentGame.getCurrentPlayers() >= 2);
+            startGameButton.setEnabled(allPlayersReady && currentGame.getCurrentPlayersNumber() >= 2);
         }
     }
 
@@ -501,15 +502,15 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         generatedLobbyCode = gameId;
         lobbyCodeDisplay.setText(gameId);
 
-        //host always ready
-        isReady=true;
+        // Host is always ready
+        isReady = true;
         gameManager.setPlayerReady(isReady);
 
         Toast.makeText(this, "Game created with code: " + gameId, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onGameJoined(MultiplayerGameOutdated game) {
+    public void onGameJoined(MultiplayerGameLogic game) {
         currentGame = game;
         generatedLobbyCode = game.getGameId();
         lobbyCodeDisplay.setText(game.getGameId());
@@ -518,7 +519,7 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
     }
 
     @Override
-    public void onGameUpdated(MultiplayerGameOutdated game) {
+    public void onGameUpdated(MultiplayerGameLogic game) {
         currentGame = game;
         updatePlayerList();
 
@@ -536,9 +537,12 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
     @Override
     public void onPlayerLeft(String playerId) {
         if (currentGame != null) {
-            for (Map.Entry<String, MultiplayerGameOutdated.GamePlayer> entry : currentGame.getPlayers().entrySet()) {
-                if (entry.getKey().equals(playerId)) {
-                    Toast.makeText(this, entry.getValue().getDisplayName() + " left the game", Toast.LENGTH_SHORT).show();
+            ArrayList<String> playerIDs = currentGame.getPlayerID();
+            ArrayList<String> playerNames = currentGame.getPlayerName();
+
+            for (int i = 0; i < playerIDs.size(); i++) {
+                if (playerId.equals(playerIDs.get(i))) {
+                    Toast.makeText(this, playerNames.get(i) + " left the game", Toast.LENGTH_SHORT).show();
                     break;
                 }
             }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ActivityLeaderBoard extends AppCompatActivity implements FireBaseListener {
-    FireBaseController fireBaseController;
+    FirebaseController fireBaseController;
     RecyclerView recyclerView;
     UserAdapter userAdapter;
 
@@ -22,7 +22,7 @@ public class ActivityLeaderBoard extends AppCompatActivity implements FireBaseLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
-        fireBaseController = new FireBaseController();
+        fireBaseController = new FirebaseController();
         fireBaseController.readUsersList(this);
 
         ArrayList<User> users = new ArrayList<>();

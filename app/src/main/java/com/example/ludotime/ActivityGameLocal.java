@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 public class ActivityGameLocal extends AppCompatActivity {
@@ -185,7 +186,7 @@ public class ActivityGameLocal extends AppCompatActivity {
                     diceValues[playerIndex].startAnimation(finalAnimation);
 
                     // Make sure the game logic knows whose turn it is
-                    gameLogic.setCurrentPlayer(currentPlayerTurn);
+                    gameLogic.setCurrentPlayerTurn(currentPlayerTurn);
 
                     // Handle game logic based on dice roll value
                     gameLogic.setDiceRoll(finalDiceValue);
@@ -392,7 +393,7 @@ public class ActivityGameLocal extends AppCompatActivity {
 
         // Build scoreboard text
         StringBuilder scoreText = new StringBuilder();
-        int[] winnerOrder = gameLogic.getWinnerOrder();
+        int[] winnerOrder = gameLogic.getWinnerOrder().stream().mapToInt(Integer::intValue).toArray();
         int winnersCount = gameLogic.getWinnersCount(); // Get the count from gameLogic
 
         // Add the winners in order

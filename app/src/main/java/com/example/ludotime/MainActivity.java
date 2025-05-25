@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText etLoginPassword;
 
     // ===== Firebase =====
-    FireBaseController fireBaseController;
+    FirebaseController fireBaseController;
 
     /**
      * Initialize the activity, set up UI elements and event listeners
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Initialize UI elements
         tvWelcome = findViewById(R.id.tvWelcome);
-        fireBaseController = new FireBaseController();
+        fireBaseController = new FirebaseController();
 
         // Set up game mode buttons
         setupGameModeButtons();
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Log out menu item
         if (item.getItemId() == R.id.menuLogOut) {
             //Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
-            FireBaseController.logOut();
+            FirebaseController.logOut();
             supportInvalidateOptionsMenu();
             tvWelcome.setText("Log in or sign up to play");
         }

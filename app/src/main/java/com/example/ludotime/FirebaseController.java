@@ -16,7 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class FireBaseController {
+public class FirebaseController {
     private static FirebaseAuth mAuth;
     private static FirebaseDatabase database;
     private static DatabaseReference ref;
