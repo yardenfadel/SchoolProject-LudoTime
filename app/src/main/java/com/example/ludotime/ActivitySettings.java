@@ -18,11 +18,23 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * ActivitySettings.java
+ *
+ * Settings activity for the LudoTime application.
+ * Handles user preferences including music volume control,
+ * player name changes, and avatar selection.
+ */
 public class ActivitySettings extends AppCompatActivity {
     private SeekBar musicVolumeSeekBar;
     private static final String PREFS_NAME = "LudoTimePrefs";
     private static final String MUSIC_VOLUME_KEY = "musicVolume";
 
+    /**
+     * Initializes the activity and sets up UI components and event listeners
+     *
+     * @param savedInstanceState Contains data supplied in onSaveInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +60,10 @@ public class ActivitySettings extends AppCompatActivity {
         setupMusicVolumeControl();
     }
 
+    /**
+     * Sets up the music volume control seekbar with saved preferences
+     * and configures the volume change listener
+     */
     private void setupMusicVolumeControl() {
         musicVolumeSeekBar = findViewById(R.id.volumeMusic);
 
@@ -80,6 +96,12 @@ public class ActivitySettings extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the music volume by sending a command to the background music service
+     * and saves the volume setting to shared preferences
+     *
+     * @param progress The seekbar progress value (0-100)
+     */
     private void updateMusicVolume(int progress) {
         // Convert seekbar value (0-100) to volume (0.0-1.0)
         float volume = (float) progress / 100f;
@@ -96,12 +118,24 @@ public class ActivitySettings extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Inflates the options menu with the return to main page option
+     *
+     * @param menu The options menu to inflate
+     * @return True if the menu was successfully created
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.return_to_main_page_menu, menu);
         return true;
     }
 
+    /**
+     * Handles menu item selection, specifically the return to main page option
+     *
+     * @param item The selected menu item
+     * @return True if the item selection was handled
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuReturn){

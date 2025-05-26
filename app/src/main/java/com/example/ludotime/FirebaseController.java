@@ -1,3 +1,10 @@
+/**
+ * FirebaseController.java
+ *
+ * Controller class that manages Firebase authentication and database operations.
+ * Provides methods for user registration, login, logout, and data retrieval.
+ * Uses singleton pattern for Firebase instances to ensure consistent access.
+ */
 package com.example.ludotime;
 
 import android.util.Log;
@@ -17,35 +24,67 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class FirebaseController {
+    /** Firebase Authentication instance */
     private static FirebaseAuth mAuth;
+
+    /** Firebase Realtime Database instance */
     private static FirebaseDatabase database;
+
+    /** Database reference pointing to the "Users" node */
     private static DatabaseReference ref;
 
+    /**
+     * Get the Firebase Authentication instance using singleton pattern
+     * @return FirebaseAuth instance for authentication operations
+     */
     public static FirebaseAuth getAuth(){
         if (mAuth == null)
             mAuth = FirebaseAuth.getInstance();
         return mAuth;
     }
+
+    /**
+     * Get the Firebase Database instance using singleton pattern
+     * @return FirebaseDatabase instance for database operations
+     */
     public static FirebaseDatabase getDatabase(){
         if (database == null)
             database = FirebaseDatabase.getInstance();
         return database;
     }
+
+    /**
+     * Get the database reference to the "Users" node using singleton pattern
+     * @return DatabaseReference pointing to the Users collection
+     */
     public static DatabaseReference getReference(){
         if (ref == null)
             ref = getDatabase().getReference("Users");
         return ref;
     }
 
+    /**
+     * Check if a user is currently authenticated
+     * @return true if a user is logged in, false otherwise
+     */
     public boolean isConnected(){
         return getAuth().getCurrentUser()!=null;
     }
 
+    /**
+     * Sign out the current user from Firebase Authentication
+     */
     public static void logOut(){
         getAuth().signOut();
     }
 
-
+    /**
+     * Create a new user account with email and password
+     * After successful authentication, stores the user data in the database
+     *
+     * @param user The User object containing registration information
+     * @param fBL FireBaseListener callback for handling completion events
+     */
     public void createUser(User user, FireBaseListener fBL){
         getAuth().createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -72,6 +111,13 @@ public class FirebaseController {
                 });
     }
 
+    /**
+     * Authenticate user with email and password
+     *
+     * @param email The user's email address
+     * @param password The user's password
+     * @param fBL FireBaseListener callback for handling authentication result
+     */
     public void loginUser(String email, String password, FireBaseListener fBL){
         getAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -87,12 +133,18 @@ public class FirebaseController {
                 });
     }
 
+    /**
+     * Read the current user's data from the database
+     * Sets up a real-time listener that will trigger whenever the user's data changes
+     *
+     * @param fBL FireBaseListener callback that receives the User object
+     */
     public void readUser(FireBaseListener fBL){
         getReference().child(getAuth().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               User user = dataSnapshot.getValue(User.class);
-               fBL.onCallbackUser(user);
+                User user = dataSnapshot.getValue(User.class);
+                fBL.onCallbackUser(user);
             }
             @Override
             public void onCancelled(DatabaseError error) {
@@ -102,6 +154,12 @@ public class FirebaseController {
         });
     }
 
+    /**
+     * Read all users from the database
+     * Sets up a real-time listener that will trigger whenever any user data changes
+     *
+     * @param fBL FireBaseListener callback that receives the ArrayList of User objects
+     */
     public void readUsersList(FireBaseListener fBL){
         getReference().addValueEventListener(new ValueEventListener() {
             @Override
@@ -120,6 +178,4 @@ public class FirebaseController {
             }
         });
     }
-
-
 }

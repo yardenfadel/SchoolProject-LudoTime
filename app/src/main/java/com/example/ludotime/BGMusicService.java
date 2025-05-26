@@ -42,6 +42,11 @@ public class BGMusicService extends Service {
 
     /**
      * Handle service start commands
+     *
+     * @param intent The Intent that was used to bind to this service
+     * @param flags Additional data about this start request
+     * @param startId A unique integer representing this specific request to start
+     * @return The return value indicates what semantics the system should use for the service's current started state
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -116,6 +121,9 @@ public class BGMusicService extends Service {
 
     /**
      * Return null as this is not a bound service
+     *
+     * @param intent The Intent that was used to bind to this service
+     * @return Always returns null since this service is not designed to be bound
      */
     @Override
     public IBinder onBind(Intent intent) {

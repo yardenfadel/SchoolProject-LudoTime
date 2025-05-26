@@ -21,35 +21,50 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+/**
+ * Main activity class that manages the home screen and user authentication
+ * Implements View.OnClickListener for button interactions and FireBaseListener for Firebase callbacks
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, FireBaseListener {
     // ===== UI Elements =====
-    // Dialogs
+    /** Dialog for user login */
     Dialog dialogLogin;
+    /** Dialog for user signup */
     Dialog dialogSignUp;
 
-    // Buttons
+    /** Login button reference */
     Button bLogin;
+    /** Sign up button reference */
     Button bSignUp;
 
-    // Text Views
+    /** Welcome message text view */
     TextView tvWelcome;
 
     // ===== Sign-up dialog elements =====
+    /** Email input field for signup */
     EditText etSignUpEmail;
+    /** Name input field for signup */
     EditText etSignUpName;
+    /** Password input field for signup */
     EditText etSignUpPassword;
+    /** Password verification input field for signup */
     EditText etSignUpVerifyPassword;
+    /** Information text view for signup feedback */
     TextView tvSignUpInfo;
 
     // ===== Login dialog elements =====
+    /** Email input field for login */
     EditText etLogInEmail;
+    /** Password input field for login */
     EditText etLoginPassword;
 
     // ===== Firebase =====
+    /** Firebase controller for authentication and database operations */
     FirebaseController fireBaseController;
 
     /**
      * Initialize the activity, set up UI elements and event listeners
+     * @param savedInstanceState Bundle containing saved state data
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Online mode button
         Button bAgainstOnline = findViewById(R.id.homePage_onlineMode);
         bAgainstOnline.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Handle online mode button click
+             * @param v The clicked view
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ActivityLobby.class);
@@ -85,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Local mode button
         Button bAgainstLocal = findViewById(R.id.homePage_localMode);
         bAgainstLocal.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Handle local mode button click
+             * @param v The clicked view
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ActivityGameLocal.class);
@@ -96,6 +119,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // About button
         Button bAbout = findViewById(R.id.homePage_about);
         bAbout.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Handle about button click
+             * @param v The clicked view
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ActivityAbout.class);
@@ -120,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * Prepare options menu before it's displayed
      * Show/hide menu items based on user login status
+     * @param menu The menu to be prepared
+     * @return true if menu should be displayed
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -145,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Initialize the options menu
+     * @param menu The menu to be inflated
+     * @return true if menu creation is successful
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -167,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Handle menu item selections
+     * @param item The selected menu item
+     * @return true if item selection is handled
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -244,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Handle button clicks
+     * @param v The clicked view
      */
     @Override
     public void onClick(View v) {
@@ -316,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Callback when user data is loaded
+     * @param u User object containing loaded data
      */
     @Override
     public void onCallbackUser(User u) {
@@ -325,6 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Callback when multiple users are loaded
+     * @param users ArrayList of User objects
      */
     @Override
     public void onCallbackUsers(ArrayList<User> users) {

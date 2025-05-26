@@ -95,6 +95,7 @@ public class GameLogic {
 
     /**
      * Constructor with test mode
+     *
      * @param testMode Set to true to use the test setup for quicker finish
      */
     public GameLogic(boolean testMode) {
@@ -217,106 +218,236 @@ public class GameLogic {
 
     // ===== Firebase-required Getters and Setters =====
 
+    /**
+     * Gets the current player's turn
+     *
+     * @return Current player index (0-3)
+     */
     public int getCurrentPlayerTurn() {
         return currentPlayerTurn;
     }
 
+    /**
+     * Sets the current player's turn
+     *
+     * @param currentPlayerTurn Player index (0-3)
+     */
     public void setCurrentPlayerTurn(int currentPlayerTurn) {
         this.currentPlayerTurn = currentPlayerTurn;
     }
 
+    /**
+     * Gets the last dice roll value
+     *
+     * @return Last dice roll (1-6)
+     */
     public int getLastDiceRoll() {
         return lastDiceRoll;
     }
 
+    /**
+     * Sets the last dice roll value
+     *
+     * @param lastDiceRoll Dice roll value (1-6)
+     */
     public void setLastDiceRoll(int lastDiceRoll) {
         this.lastDiceRoll = lastDiceRoll;
     }
 
+    /**
+     * Checks if dice has been rolled
+     *
+     * @return True if dice rolled
+     */
     public boolean isDiceRolled() {
         return diceRolled;
     }
 
+    /**
+     * Sets the dice rolled state
+     *
+     * @param diceRolled True if dice rolled
+     */
     public void setDiceRolled(boolean diceRolled) {
         this.diceRolled = diceRolled;
     }
 
+    /**
+     * Checks if move has been made
+     *
+     * @return True if move made
+     */
     public boolean isMoveMade() {
         return moveMade;
     }
 
+    /**
+     * Sets the move made state
+     *
+     * @param moveMade True if move made
+     */
     public void setMoveMade(boolean moveMade) {
         this.moveMade = moveMade;
     }
 
+    /**
+     * Gets pawn home status for all players
+     *
+     * @return 2D list of pawn home states
+     */
     public ArrayList<ArrayList<Boolean>> getPawnInHome() {
         return pawnInHome;
     }
 
+    /**
+     * Sets pawn home status for all players
+     *
+     * @param pawnInHome 2D list of pawn home states
+     */
     public void setPawnInHome(ArrayList<ArrayList<Boolean>> pawnInHome) {
         this.pawnInHome = pawnInHome;
     }
 
+    /**
+     * Gets pawn finished status for all players
+     *
+     * @return 2D list of pawn finished states
+     */
     public ArrayList<ArrayList<Boolean>> getPawnFinished() {
         return pawnFinished;
     }
 
+    /**
+     * Sets pawn finished status for all players
+     *
+     * @param pawnFinished 2D list of pawn finished states
+     */
     public void setPawnFinished(ArrayList<ArrayList<Boolean>> pawnFinished) {
         this.pawnFinished = pawnFinished;
     }
 
+    /**
+     * Gets pawn finish line status for all players
+     *
+     * @return 2D list of pawn finish line states
+     */
     public ArrayList<ArrayList<Boolean>> getPawnOnFinishLine() {
         return pawnOnFinishLine;
     }
 
+    /**
+     * Sets pawn finish line status for all players
+     *
+     * @param pawnOnFinishLine 2D list of pawn finish line states
+     */
     public void setPawnOnFinishLine(ArrayList<ArrayList<Boolean>> pawnOnFinishLine) {
         this.pawnOnFinishLine = pawnOnFinishLine;
     }
 
+    /**
+     * Gets main board positions for all pawns
+     *
+     * @return 2D list of pawn positions (0-51)
+     */
     public ArrayList<ArrayList<Integer>> getPawnPositions() {
         return pawnPositions;
     }
 
+    /**
+     * Sets main board positions for all pawns
+     *
+     * @param pawnPositions 2D list of pawn positions (0-51)
+     */
     public void setPawnPositions(ArrayList<ArrayList<Integer>> pawnPositions) {
         this.pawnPositions = pawnPositions;
     }
 
+    /**
+     * Gets final path positions for all pawns
+     *
+     * @return 2D list of final path positions (0-4)
+     */
     public ArrayList<ArrayList<Integer>> getFinalPathPositions() {
         return finalPathPositions;
     }
 
+    /**
+     * Sets final path positions for all pawns
+     *
+     * @param finalPathPositions 2D list of final path positions (0-4)
+     */
     public void setFinalPathPositions(ArrayList<ArrayList<Integer>> finalPathPositions) {
         this.finalPathPositions = finalPathPositions;
     }
 
+    /**
+     * Checks if waiting for pawn selection
+     *
+     * @return True if waiting for selection
+     */
     public boolean isWaitingForPawnSelection() {
         return waitingForPawnSelection;
     }
 
+    /**
+     * Sets waiting for pawn selection state
+     *
+     * @param waitingForPawnSelection True if waiting for selection
+     */
     public void setWaitingForPawnSelection(boolean waitingForPawnSelection) {
         this.waitingForPawnSelection = waitingForPawnSelection;
     }
 
+    /**
+     * Gets selected pawn index
+     *
+     * @return Selected pawn index (0-3) or -1 if none
+     */
     public int getSelectedPawn() {
         return selectedPawn;
     }
 
+    /**
+     * Sets selected pawn index
+     *
+     * @param selectedPawn Pawn index (0-3) or -1 for none
+     */
     public void setSelectedPawn(int selectedPawn) {
         this.selectedPawn = selectedPawn;
     }
 
+    /**
+     * Gets winner order list
+     *
+     * @return List of player indices in winning order
+     */
     public ArrayList<Integer> getWinnerOrder() {
         return winnerOrder;
     }
 
+    /**
+     * Sets winner order list
+     *
+     * @param winnerOrder List of player indices in winning order
+     */
     public void setWinnerOrder(ArrayList<Integer> winnerOrder) {
         this.winnerOrder = winnerOrder;
     }
 
+    /**
+     * Gets number of winners
+     *
+     * @return Number of players who have won
+     */
     public int getWinnersCount() {
         return winnersCount;
     }
 
+    /**
+     * Sets number of winners
+     *
+     * @param winnersCount Number of players who have won
+     */
     public void setWinnersCount(int winnersCount) {
         this.winnersCount = winnersCount;
     }
@@ -382,8 +513,9 @@ public class GameLogic {
     }
 
     /**
-     *Plays the next round (setPawnSelection() might be called later to complete)
-     *@return Did the round end
+     * Plays the next round (setPawnSelection() might be called later to complete)
+     *
+     * @return Did the round end
      */
     public boolean playRound() {
         if (hasValidMoves()) {
@@ -400,7 +532,9 @@ public class GameLogic {
     }
 
     /**
-     *Continues the round after a pawn choice
+     * Continues the round after a pawn choice
+     *
+     * @param pawnIndex Index of the selected pawn (0-3)
      */
     public void setPawnSelection(int pawnIndex) {
         this.selectedPawn = pawnIndex;
@@ -421,6 +555,7 @@ public class GameLogic {
 
     /**
      * Set the dice roll value for the current turn
+     *
      * @param value Dice roll value (1-6)
      */
     public void setDiceRoll(int value) {
@@ -445,7 +580,8 @@ public class GameLogic {
 
     /**
      * Check if a pawn is in its home area
-     * @param player Player index (0-3)
+     *
+     * @param player    Player index (0-3)
      * @param pawnIndex Pawn index (0-3)
      * @return True if pawn is in home
      */
@@ -455,7 +591,8 @@ public class GameLogic {
 
     /**
      * Check if a pawn has finished the game
-     * @param player Player index (0-3)
+     *
+     * @param player    Player index (0-3)
      * @param pawnIndex Pawn index (0-3)
      * @return True if pawn has finished
      */
@@ -465,7 +602,8 @@ public class GameLogic {
 
     /**
      * Check if a pawn is on the finish line (final path)
-     * @param player Player index (0-3)
+     *
+     * @param player    Player index (0-3)
      * @param pawnIndex Pawn index (0-3)
      * @return True if pawn is on finish line
      */
@@ -475,7 +613,8 @@ public class GameLogic {
 
     /**
      * Get the board position for a specific pawn
-     * @param player Player index (0-3)
+     *
+     * @param player    Player index (0-3)
      * @param pawnIndex Pawn index (0-3)
      * @return Point with x,y coordinates on the board grid
      */
@@ -502,6 +641,7 @@ public class GameLogic {
 
     /**
      * Convert a main track position (0-51) to board coordinates
+     *
      * @param position Track position (0-51)
      * @return Point with x,y coordinates on the board grid
      */
@@ -573,7 +713,8 @@ public class GameLogic {
 
     /**
      * Try to move a pawn by the last dice roll
-     * @param player Player index (0-3)
+     *
+     * @param player    Player index (0-3)
      * @param pawnIndex Pawn index (0-3)
      * @return True if the move was valid and completed
      */
@@ -640,8 +781,7 @@ public class GameLogic {
                     stepsIntoFinalPath = lastDiceRoll - distanceToEntry - 1;
                 }
             }
-        }
-        else if (player == GREEN_PLAYER) {
+        } else if (player == GREEN_PLAYER) {
             // Needs special handling for positions 8-11 going to final path
             if (currentPosition >= 8 && currentPosition <= 11) {
                 int distanceToEntry = (11 - currentPosition);
@@ -651,8 +791,7 @@ public class GameLogic {
                     stepsIntoFinalPath = lastDiceRoll - distanceToEntry - 1;
                 }
             }
-        }
-        else if (player == YELLOW_PLAYER) {
+        } else if (player == YELLOW_PLAYER) {
             // Needs special handling for positions 21-24 going to final path
             if (currentPosition >= 21 && currentPosition <= 24) {
                 int distanceToEntry = (24 - currentPosition);
@@ -662,8 +801,7 @@ public class GameLogic {
                     stepsIntoFinalPath = lastDiceRoll - distanceToEntry - 1;
                 }
             }
-        }
-        else if (player == BLUE_PLAYER) {
+        } else if (player == BLUE_PLAYER) {
             // Needs special handling for positions 34-37 going to final path
             if (currentPosition >= 34 && currentPosition <= 37) {
                 int distanceToEntry = (37 - currentPosition);
@@ -694,7 +832,8 @@ public class GameLogic {
 
     /**
      * Move a pawn from home to the start position
-     * @param player Player index (0-3)
+     *
+     * @param player    Player index (0-3)
      * @param pawnIndex Pawn index (0-3)
      */
     private void exitPawnFromHome(int player, int pawnIndex) {
@@ -707,8 +846,9 @@ public class GameLogic {
 
     /**
      * Check if the moving pawn captures any opponent pawns
+     *
      * @param movingPlayer The player who is moving
-     * @param position The position to check for captures
+     * @param position     The position to check for captures
      */
     private void checkForCaptures(int movingPlayer, int position) {
         for (int player = 0; player < 4; player++) {
@@ -720,12 +860,12 @@ public class GameLogic {
                 int currentPos = pawnPositions.get(player).get(pawn);
                 if (!pawnInHome.get(player).get(pawn) && !pawnFinished.get(player).get(pawn) &&
                         !pawnOnFinishLine.get(player).get(pawn) && currentPos == position
-                        && currentPos != 8 && currentPos !=21 && currentPos !=34 && currentPos != 47 ) {
+                        && currentPos != 8 && currentPos != 21 && currentPos != 34 && currentPos != 47) {
 
-                    if(player==0 && currentPos == 0) break;
-                    if(player==1 && currentPos == 13) break;
-                    if(player==2 && currentPos == 26) break;
-                    if(player==3 && currentPos == 39) break;
+                    if (player == 0 && currentPos == 0) break;
+                    if (player == 1 && currentPos == 13) break;
+                    if (player == 2 && currentPos == 26) break;
+                    if (player == 3 && currentPos == 39) break;
 
                     // Send the pawn back home
                     pawnInHome.get(player).set(pawn, true);
@@ -737,6 +877,7 @@ public class GameLogic {
 
     /**
      * Check if the game is over (3 players have won)
+     *
      * @return True if the game is over with 3 winners
      */
     public boolean isGameOver() {
@@ -745,6 +886,7 @@ public class GameLogic {
 
     /**
      * Get the winner order array
+     *
      * @return ArrayList with player indices in order of winning (-1 for not finished)
      */
     public ArrayList<Integer> getWinnerOrderList() {
@@ -753,6 +895,7 @@ public class GameLogic {
 
     /**
      * Get the position a player finished in (1st, 2nd, 3rd, or not finished)
+     *
      * @param player Player index to check
      * @return Position (1, 2, 3) or 0 if not finished yet or 4 if last
      */
@@ -767,6 +910,7 @@ public class GameLogic {
 
     /**
      * Check if a player has won the game
+     *
      * @param player Player index (0-3)
      * @return True if all pawns have finished
      */
@@ -781,6 +925,7 @@ public class GameLogic {
 
     /**
      * Check if a player is already in the winners list
+     *
      * @param player Player index to check
      * @return True if player is already in winners list
      */
@@ -794,7 +939,8 @@ public class GameLogic {
     }
 
     /**
-     * Track all winners
+     * Track all winners and return latest winner
+     *
      * @return Player index of the latest winner, or -1 if no new winner
      */
     public int getWinner() {
@@ -816,6 +962,7 @@ public class GameLogic {
 
     /**
      * Get the number of pawns out of home for a player
+     *
      * @param player Player index (0-3)
      * @return Number of pawns on the board
      */
@@ -831,6 +978,7 @@ public class GameLogic {
 
     /**
      * Check if player can make any valid moves with current dice roll
+     *
      * @return True if any valid moves exist
      */
     public boolean hasValidMoves() {
@@ -866,7 +1014,9 @@ public class GameLogic {
     }
 
     /**
-     * Get debug information
+     * Get debug information about winners
+     *
+     * @return String containing winners debug info
      */
     public String getWinnersDebugInfo() {
         StringBuilder info = new StringBuilder("Winners: ");
@@ -879,6 +1029,7 @@ public class GameLogic {
 
     /**
      * Get list of movable pawns for current player
+     *
      * @return ArrayList of pawn indices that can be moved
      */
     public ArrayList<Integer> getMovablePawns() {
@@ -919,6 +1070,7 @@ public class GameLogic {
 
     /**
      * Get coordinates for all pawns of a specific player
+     *
      * @param player Player index (0-3)
      * @return ArrayList of Points representing pawn positions
      */
@@ -934,6 +1086,7 @@ public class GameLogic {
 
     /**
      * Get all active pawns (not in home, not finished) for a player
+     *
      * @param player Player index (0-3)
      * @return ArrayList of pawn indices that are active on the board
      */
@@ -951,6 +1104,7 @@ public class GameLogic {
 
     /**
      * Get home coordinates for a specific player
+     *
      * @param player Player index (0-3)
      * @return ArrayList of Points representing home positions
      */
@@ -960,6 +1114,7 @@ public class GameLogic {
 
     /**
      * Get final path coordinates for a specific player
+     *
      * @param player Player index (0-3)
      * @return ArrayList of Points representing final path positions
      */
@@ -994,6 +1149,7 @@ public class GameLogic {
 
     /**
      * Get game state summary
+     *
      * @return String with current game state information
      */
     public String getGameStateSummary() {
@@ -1017,6 +1173,7 @@ public class GameLogic {
 
     /**
      * Get number of pawns in home for a player
+     *
      * @param player Player index (0-3)
      * @return Number of pawns still in home
      */
@@ -1032,6 +1189,7 @@ public class GameLogic {
 
     /**
      * Get number of finished pawns for a player
+     *
      * @param player Player index (0-3)
      * @return Number of pawns that have finished
      */
@@ -1044,4 +1202,5 @@ public class GameLogic {
         }
         return count;
     }
+
 }

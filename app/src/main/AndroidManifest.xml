@@ -30,9 +30,6 @@
             android:name=".ActivityGameLocal"
             android:exported="false" />
         <activity
-            android:name=".ActivityGameMultiplayer"
-            android:exported="false" />
-        <activity
             android:name=".ActivityLobby"
             android:exported="false" />
         <activity

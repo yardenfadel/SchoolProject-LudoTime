@@ -17,32 +17,112 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
+/**
+ * Firebase Game Manager handles all multiplayer game operations with Firebase Realtime Database.
+ * This class manages game creation, joining, real-time updates, and game state synchronization
+ * across multiple players. It provides a comprehensive interface for multiplayer Ludo game
+ * functionality including turn management, dice rolling, and pawn movement coordination.
+ *
+ * <p>The manager uses Firebase transactions to ensure data consistency and prevent race conditions
+ * when multiple players perform actions simultaneously. It also provides real-time updates
+ * through Firebase listeners to keep all players synchronized with the current game state.</p>
+
+ */
 public class FirebaseGameManager {
+    /** Tag used for logging debug information */
     private static final String TAG = "FirebaseGameManager";
+
+    /** Firebase database reference path for games collection */
     private static final String GAMES_REF = "games";
 
+    /** Firebase Authentication instance for user management */
     private static FirebaseAuth mAuth;
+
+    /** Firebase Database instance for data operations */
     private static FirebaseDatabase database;
+
+    /** Database reference specifically for games collection */
     private DatabaseReference gamesRef;
+
+    /** Current user's unique identifier */
     private String currentUserId;
+
+    /** ID of the currently active game session */
     private String currentGameId;
+
+    /** Listener for real-time game state updates */
     private ValueEventListener gameListener;
 
+    /** Callback interface for notifying UI about game events */
     private GameUpdateListener updateListener;
+
     /**
      * Interface for notifying UI about game updates
      * Contains callbacks for various game events that the UI can implement
      */
     public interface GameUpdateListener {
+        /**
+         * Called when a new game is successfully created
+         * @param gameId The unique identifier of the newly created game
+         */
         void onGameCreated(String gameId);
+
+        /**
+         * Called when a player successfully joins a game
+         * @param game The current game state after joining
+         */
         void onGameJoined(MultiplayerGameLogic game);
+
+        /**
+         * Called when any aspect of the game state is updated
+         * @param game The updated game state
+         */
         void onGameUpdated(MultiplayerGameLogic game);
+
+        /**
+         * Called when a new player joins the game
+         * @param playerId The unique identifier of the joining player
+         * @param playerName The display name of the joining player
+         */
         void onPlayerJoined(String playerId, String playerName);
+
+        /**
+         * Called when a player leaves the game
+         * @param playerId The unique identifier of the leaving player
+         */
         void onPlayerLeft(String playerId);
+
+        /**
+         * Called when a game-related error occurs
+         * @param message Descriptive error message for user display
+         */
         void onGameError(String message);
+
+        /**
+         * Called when the turn changes to a different player
+         * @param playerTurn The index (0-3) of the player whose turn it is
+         */
         void onTurnChange(int playerTurn);
+
+        /**
+         * Called when a player rolls the dice
+         * @param playerIndex The index of the player who rolled
+         * @param diceValue The value rolled (1-6)
+         */
         void onDiceRolled(int playerIndex, int diceValue);
+
+        /**
+         * Called when a pawn is moved on the board
+         * @param playerIndex The index of the player who moved the pawn
+         * @param pawnIndex The index of the pawn that was moved (0-3)
+         * @param position The new position of the pawn on the board
+         */
         void onPawnMoved(int playerIndex, int pawnIndex, int position);
+
+        /**
+         * Called when the game ends with final results
+         * @param winnerOrder Array containing player indices in order of finishing
+         */
         void onGameEnded(int[] winnerOrder);
     }
 
@@ -121,6 +201,14 @@ public class FirebaseGameManager {
         });
     }
 
+    /**
+     * Performs the actual Firebase transaction to join a game.
+     * This method handles the complex logic of safely adding a player to an existing game
+     * while ensuring data consistency and preventing race conditions.
+     *
+     * @param gameId The unique identifier of the game to join
+     * @param displayName The display name of the current user joining the game
+     */
     private void performJoinTransaction(String gameId, String displayName) {
         gamesRef.child(gameId).runTransaction(new Transaction.Handler() {
             @Override
@@ -688,7 +776,7 @@ public class FirebaseGameManager {
         gamesRef.child(gameId).addValueEventListener(gameListener);
     }
 
-    // Keep track of known players to detect joins/leaves
+    /** List to keep track of known players for detecting joins and leaves */
     private ArrayList<String> knownPlayers = new ArrayList<>();
 
     /**

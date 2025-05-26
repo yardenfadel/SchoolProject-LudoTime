@@ -1,8 +1,8 @@
 /**
- * ActivityGameBot.java
+ * ActivityGameLocal.java
  *
- * Game activity for playing Ludo against bots.
- * Handles game board, players' turns, and dice rolling mechanics.
+ * Game activity for playing Ludo locally with multiple players.
+ * Handles game board, players' turns, dice rolling mechanics, and game completion.
  */
 package com.example.ludotime;
 
@@ -29,6 +29,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.LinkedList;
 import java.util.Random;
 
+/**
+ * Activity for local multiplayer Ludo game.
+ * Manages the game board, player turns, dice rolling, and win conditions.
+ */
 public class ActivityGameLocal extends AppCompatActivity {
     // ===== Game Elements =====
     BoardCanvas board;
@@ -49,7 +53,12 @@ public class ActivityGameLocal extends AppCompatActivity {
     private final String[] playerColors = {"Red", "Green", "Yellow", "Blue"};
 
     /**
-     * Initialize the game activity
+     * Initialize the game activity.
+     * Sets up the game board, player UI elements, and initializes the first player's turn.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     *                          being shut down then this Bundle contains the data it most
+     *                          recently supplied in onSaveInstanceState(Bundle).
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +66,7 @@ public class ActivityGameLocal extends AppCompatActivity {
         setContentView(R.layout.activity_game_local);
 
         // Set to true for quick testing, false for normal gameplay
-        boolean testMode = true; // TOGGLE THIS FOR TESTING
+        boolean testMode = false; // TOGGLE THIS FOR TESTING
 
         // Initialize game board with test mode
         board = new BoardCanvas(this, testMode);
@@ -81,7 +90,8 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Initialize player UI components and set up event listeners
+     * Initialize player UI components and set up event listeners.
+     * Sets up turn indicators, dice displays, and roll buttons for all players.
      */
     private void initializePlayerViews() {
         // Find turn indicators
@@ -113,7 +123,8 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Handle dice rolling for the given player
+     * Handle dice rolling for the given player.
+     * Performs animated dice roll, plays sound effects, and processes game logic.
      *
      * @param playerIndex Index of the player (0-3)
      */
@@ -133,8 +144,8 @@ public class ActivityGameLocal extends AppCompatActivity {
         final int intervalBetweenFrames = 50; // 50ms between changes
 
         // Generate final dice value (1-6)
-        //final int finalDiceValue = random.nextInt(6) + 1;
-        final int finalDiceValue = random.nextInt(2) + 5;
+        final int finalDiceValue = random.nextInt(6) + 1;
+        //final int finalDiceValue = random.nextInt(2) + 5;
 
         // Create blinking animation for dice value
         AlphaAnimation blinkAnimation = new AlphaAnimation(0.2f, 1.0f);
@@ -288,7 +299,8 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Switch to the next player's turn
+     * Switch to the next player's turn.
+     * Finds the next active player who hasn't won yet and updates the UI accordingly.
      */
     private void nextPlayerTurn() {
         // Disable current player's roll button
@@ -322,7 +334,8 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Update UI to indicate the active player
+     * Update UI to indicate the active player.
+     * Shows/hides turn indicators and updates dice appearance.
      *
      * @param playerIndex Index of the active player (0-3)
      */
@@ -340,7 +353,8 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Update the appearance of dice based on current player
+     * Update the appearance of dice based on current player.
+     * Highlights active player's dice and dims inactive players' dice.
      */
     private void updateDiceAppearance() {
         // Update dice appearances based on current player
@@ -362,7 +376,11 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Initialize the options menu
+     * Initialize the contents of the Activity's standard options menu.
+     * Inflates the return to main page menu.
+     *
+     * @param menu The options menu in which you place your items.
+     * @return true for the menu to be displayed; false it will not be shown.
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -371,7 +389,12 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Handle menu item selections
+     * Called whenever an item in the options menu is selected.
+     * Handles the return to main page menu item selection.
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to proceed,
+     *                 true to consume it here.
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -384,7 +407,8 @@ public class ActivityGameLocal extends AppCompatActivity {
 
 
     /**
-     * Display the final scoreboard showing player rankings
+     * Display the final scoreboard showing player rankings.
+     * Creates an alert dialog with final standings and navigation back to main menu.
      */
     private void showScoreboard() {
         // Create a dialog to show the scoreboard
@@ -430,10 +454,10 @@ public class ActivityGameLocal extends AppCompatActivity {
     }
 
     /**
-     * Get the ordinal suffix for a number (1st, 2nd, 3rd, etc.)
+     * Get the ordinal suffix for a number (1st, 2nd, 3rd, etc.).
      *
      * @param n The number to get a suffix for
-     * @return The ordinal suffix
+     * @return The ordinal suffix (st, nd, rd, th)
      */
     private String getOrdinalSuffix(int n) {
         if (n >= 11 && n <= 13) {

@@ -16,8 +16,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * Activity that displays information about the LudoTime application.
+ * Provides a GitHub link button and menu options to return to the main page.
+ */
 public class ActivityAbout extends AppCompatActivity {
 
+    /**
+     * Called when the activity is first created.
+     * Sets up the layout and initializes the GitHub link button with a click listener.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     *                          being shut down then this Bundle contains the data it most
+     *                          recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,12 +48,27 @@ public class ActivityAbout extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initialize the contents of the Activity's standard options menu.
+     * Inflates the return to main page menu.
+     *
+     * @param menu The options menu in which you place your items.
+     * @return true for the menu to be displayed; false it will not be shown.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.return_to_main_page_menu,menu);
         return true;
     }
 
+    /**
+     * Called whenever an item in the options menu is selected.
+     * Handles the return to main page menu item selection.
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to proceed,
+     *                 true to consume it here.
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuReturn){

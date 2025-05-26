@@ -350,11 +350,12 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
      * Launches the multiplayer game activity
      */
     private void launchGameActivity() {
-        Intent intent = new Intent(ActivityLobby.this, ActivityGameMultiplayer.class);
-        intent.putExtra("GAME_ID", currentGame.getGameId());
-        intent.putExtra("PLAYER_NAME", playerName);
-        intent.putExtra("IS_HOST", isHost);
-        intent.putExtra("USER_ID", currentUser.getUid());
+        Intent intent = new Intent(ActivityLobby.this, ActivityGameLocal.class);
+        //Intent intent = new Intent(ActivityLobby.this, ActivityGameMultiplayer.class);
+        //intent.putExtra("GAME_ID", currentGame.getGameId());
+        //intent.putExtra("PLAYER_NAME", playerName);
+        //intent.putExtra("IS_HOST", isHost);
+        //intent.putExtra("USER_ID", currentUser.getUid());
         startActivity(intent);
         finish(); // Close lobby activity
     }
@@ -497,6 +498,12 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
 
     // FirebaseGameManager.GameUpdateListener Implementation
 
+    /**
+     * Called when a new game is successfully created
+     * Updates UI with the generated lobby code
+     *
+     * @param gameId The unique identifier for the created game
+     */
     @Override
     public void onGameCreated(String gameId) {
         generatedLobbyCode = gameId;
@@ -509,6 +516,12 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         Toast.makeText(this, "Game created with code: " + gameId, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Called when successfully joined an existing game
+     * Updates local game state and refreshes player list
+     *
+     * @param game The multiplayer game logic instance
+     */
     @Override
     public void onGameJoined(MultiplayerGameLogic game) {
         currentGame = game;
@@ -518,6 +531,13 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         updatePlayerList();
     }
 
+
+    /**
+     * Called when game state is updated (players join/leave, ready status changes)
+     * Refreshes player list and launches game if started
+     *
+     * @param game The updated multiplayer game logic instance
+     */
     @Override
     public void onGameUpdated(MultiplayerGameLogic game) {
         currentGame = game;
@@ -529,11 +549,24 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         }
     }
 
+    /**
+     * Called when a new player joins the game
+     * Shows a toast notification with the player's name
+     *
+     * @param playerId The unique identifier of the player who joined
+     * @param playerName The display name of the player who joined
+     */
     @Override
     public void onPlayerJoined(String playerId, String playerName) {
         Toast.makeText(this, playerName + " joined the game", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Called when a player leaves the game
+     * Shows a toast notification with the player's name
+     *
+     * @param playerId The unique identifier of the player who left
+     */
     @Override
     public void onPlayerLeft(String playerId) {
         if (currentGame != null) {
@@ -549,6 +582,12 @@ public class ActivityLobby extends AppCompatActivity implements FirebaseGameMana
         }
     }
 
+    /**
+     * Called when an error occurs in the game
+     * Displays error message to the user
+     *
+     * @param message The error message to display
+     */
     @Override
     public void onGameError(String message) {
         Toast.makeText(this, "Error: " + message, Toast.LENGTH_SHORT).show();

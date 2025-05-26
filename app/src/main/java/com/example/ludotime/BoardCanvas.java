@@ -135,6 +135,9 @@ public class BoardCanvas extends View {
 
     /**
      * Convert grid X coordinate to pixel X coordinate (centered)
+     * @param canvas The canvas being drawn on
+     * @param x The grid X coordinate (0-15)
+     * @return The pixel X coordinate centered in the grid cell
      */
     private int getPixelsCordX(Canvas canvas, int x) {
         return (int)(canvas.getWidth() * ((float)(x + 0.5) / 16));
@@ -142,6 +145,9 @@ public class BoardCanvas extends View {
 
     /**
      * Convert grid Y coordinate to pixel Y coordinate (centered)
+     * @param canvas The canvas being drawn on
+     * @param y The grid Y coordinate (0-15)
+     * @return The pixel Y coordinate centered in the grid cell
      */
     private int getPixelsCordY(Canvas canvas, int y) {
         return (int)(canvas.getHeight() * ((float)(y + 0.5) / 16));
@@ -149,6 +155,9 @@ public class BoardCanvas extends View {
 
     /**
      * Convert grid X coordinate to pixel X coordinate (top-left corner)
+     * @param canvas The canvas being drawn on
+     * @param x The grid X coordinate (0-15)
+     * @return The pixel X coordinate at the top-left corner of the grid cell
      */
     private int getGridPixelX(Canvas canvas, int x) {
         return (int)(canvas.getWidth() * ((float)x / 16));
@@ -156,6 +165,9 @@ public class BoardCanvas extends View {
 
     /**
      * Convert grid Y coordinate to pixel Y coordinate (top-left corner)
+     * @param canvas The canvas being drawn on
+     * @param y The grid Y coordinate (0-15)
+     * @return The pixel Y coordinate at the top-left corner of the grid cell
      */
     private int getGridPixelY(Canvas canvas, int y) {
         return (int)(canvas.getHeight() * ((float)y / 16));
@@ -163,6 +175,9 @@ public class BoardCanvas extends View {
 
     /**
      * Convert pixel coordinates to board grid position
+     * @param touchX The X coordinate of the touch in pixels
+     * @param touchY The Y coordinate of the touch in pixels
+     * @return A Point containing the grid coordinates (x, y) of the touch
      */
     private Point getBoardPosition(float touchX, float touchY) {
         int boardX = (int)(touchX * 16f / getWidth()-0.5);
@@ -172,6 +187,9 @@ public class BoardCanvas extends View {
 
     /**
      * Check if touch point is near a pawn
+     * @param touch The touch point in grid coordinates
+     * @param pawn The pawn position in grid coordinates
+     * @return true if the touch is within 0.5 grid units of the pawn
      */
     private boolean isNearPawn(Point touch, Point pawn) {
         double distance = Math.sqrt(
@@ -184,6 +202,8 @@ public class BoardCanvas extends View {
     /**
      * Handle touch events on the game board
      * Handles pawn selection when game logic is waiting for it
+     * @param event The motion event containing touch information
+     * @return true if the event was handled, false otherwise
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -221,6 +241,9 @@ public class BoardCanvas extends View {
 
     /**
      * Draw the game board and all pawns
+     * Handles synchronization with game logic, multiple pawns on same square,
+     * and visual highlighting of selectable/selected pawns
+     * @param canvas The canvas to draw on
      */
     @Override
     protected void onDraw(Canvas canvas) {
@@ -427,6 +450,10 @@ public class BoardCanvas extends View {
         }
     }
 
+    /**
+     * Set the game logic instance for this board canvas
+     * @param gameLogic The GameLogic instance to use for game state management
+     */
     public void setLogic(GameLogic gameLogic) {
         this.gameLogic = gameLogic;
     }
